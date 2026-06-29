@@ -1,0 +1,3023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scripture Trivia</title>
+    <style>
+        :root {
+            --primary: #1e3a5f;
+            --primary-light: #2c5282;
+            --accent: #d4a843;
+            --accent-hover: #c49a38;
+            --bg: #f5f0e8;
+            --card-bg: #ffffff;
+            --text: #2d3748;
+            --text-light: #718096;
+            --correct: #38a169;
+            --incorrect: #e53e3e;
+            --border-radius: 12px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .header p {
+            opacity: 0.85;
+            font-size: 0.95rem;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 24px 16px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 28px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+
+        /* --- Start Screen --- */
+        .start-screen .title-area {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .start-screen .title-area .icon {
+            font-size: 3.5rem;
+            margin-bottom: 12px;
+        }
+
+        .start-screen .title-area h2 {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .start-screen .title-area p {
+            color: var(--text-light);
+            margin-top: 6px;
+        }
+
+        .setting-group {
+            margin-bottom: 20px;
+        }
+
+        .setting-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+
+        .pill-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .pill {
+            padding: 8px 16px;
+            border: 2px solid #cbd5e0;
+            border-radius: 50px;
+            background: white;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .pill:hover {
+            border-color: var(--accent);
+        }
+
+        .pill.selected {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+            font-weight: 600;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 36px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            letter-spacing: 0.3px;
+        }
+
+        .btn:hover { background: var(--accent-hover); }
+        .btn:active { transform: scale(0.97); }
+
+        .btn-secondary {
+            background: var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-light);
+        }
+
+        .btn-center {
+            display: flex;
+            justify-content: center;
+            margin-top: 24px;
+        }
+
+        /* --- Game Screen --- */
+        .game-hud {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .quit-btn {
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: white;
+            border: 2px solid #e2e8f0;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        }
+
+        .quit-btn:hover {
+            border-color: var(--incorrect);
+            color: var(--incorrect);
+            background: #fff5f5;
+        }
+
+        .hud-item {
+            background: white;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        }
+
+        .hud-item .label {
+            color: var(--text-light);
+            font-weight: 400;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 3px;
+            transition: width 0.4s ease;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .difficulty-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: 6px;
+        }
+
+        .difficulty-badge.easy { background: #c6f6d5; color: #276749; }
+        .difficulty-badge.medium { background: #fefcbf; color: #975a16; }
+        .difficulty-badge.hard { background: #fed7d7; color: #9b2c2c; }
+
+        .question-text {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 24px;
+            font-weight: 500;
+        }
+
+        .answers {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .answer-btn {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--border-radius);
+            background: white;
+            text-align: left;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            line-height: 1.4;
+        }
+
+        .answer-btn:hover:not(.disabled) {
+            border-color: var(--accent);
+            background: #fffdf5;
+        }
+
+        .answer-btn.correct {
+            border-color: var(--correct);
+            background: #f0fff4;
+            color: var(--correct);
+            font-weight: 600;
+        }
+
+        .answer-btn.incorrect {
+            border-color: var(--incorrect);
+            background: #fff5f5;
+            color: var(--incorrect);
+        }
+
+        .answer-btn.disabled {
+            cursor: default;
+            opacity: 0.7;
+        }
+
+        .answer-btn .option-letter {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            line-height: 28px;
+            text-align: center;
+            border-radius: 50%;
+            background: #edf2f7;
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .answer-btn.correct .option-letter {
+            background: var(--correct);
+            color: white;
+        }
+
+        .answer-btn.incorrect .option-letter {
+            background: var(--incorrect);
+            color: white;
+        }
+
+        .explanation {
+            margin-top: 20px;
+            padding: 16px;
+            background: #edf2f7;
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--primary);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--text);
+        }
+
+        .explanation strong {
+            color: var(--primary);
+        }
+
+        .next-btn-area {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        /* --- Results Screen --- */
+        .results-screen {
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            box-shadow: 0 4px 20px rgba(30,58,95,0.3);
+        }
+
+        .score-circle .score-num {
+            font-size: 2.8rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .score-circle .score-label {
+            font-size: 0.85rem;
+            opacity: 0.85;
+            margin-top: 4px;
+        }
+
+        .results-message {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .results-sub {
+            color: var(--text-light);
+            margin-bottom: 24px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .stat-box {
+            background: var(--bg);
+            padding: 14px;
+            border-radius: var(--border-radius);
+        }
+
+        .stat-box .stat-num {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-box .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .results-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        .streak-indicator {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--accent);
+            font-weight: 600;
+            min-height: 24px;
+            margin-bottom: 4px;
+        }
+
+        /* --- Fill in the Blanks --- */
+        .verse-reference {
+            font-size: 0.85rem;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .verse-text {
+            font-size: 1.15rem;
+            line-height: 2.2;
+            margin-bottom: 24px;
+            color: var(--text);
+            font-style: italic;
+        }
+
+        .blank-slot {
+            display: inline-block;
+            min-width: 80px;
+            padding: 2px 10px;
+            border-bottom: 3px solid var(--accent);
+            background: #fffdf5;
+            margin: 2px 4px;
+            cursor: pointer;
+            text-align: center;
+            font-style: normal;
+            font-weight: 600;
+            color: var(--primary);
+            border-radius: 4px 4px 0 0;
+            transition: all 0.2s;
+            vertical-align: baseline;
+        }
+
+        .blank-slot:hover {
+            background: #fff8e1;
+            border-bottom-color: var(--primary);
+        }
+
+        .blank-slot.selected {
+            border-bottom-color: var(--primary);
+            background: #e8f0fe;
+            box-shadow: 0 0 0 2px var(--primary-light);
+        }
+
+        .blank-slot.filled {
+            border-bottom-color: var(--primary-light);
+            background: #e8f0fe;
+        }
+
+        .blank-slot.correct-blank {
+            border-bottom-color: var(--correct);
+            background: #f0fff4;
+            color: var(--correct);
+        }
+
+        .blank-slot.incorrect-blank {
+            border-bottom-color: var(--incorrect);
+            background: #fff5f5;
+            color: var(--incorrect);
+            text-decoration: line-through;
+        }
+
+        .word-pile-label {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .word-pile {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+            min-height: 44px;
+            padding: 12px;
+            background: #f7fafc;
+            border-radius: var(--border-radius);
+            border: 2px dashed #cbd5e0;
+        }
+
+        .word-chip {
+            padding: 8px 16px;
+            background: white;
+            border: 2px solid #cbd5e0;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            user-select: none;
+            color: var(--text);
+        }
+
+        .word-chip:hover {
+            border-color: var(--accent);
+            background: #fffdf5;
+            transform: translateY(-1px);
+        }
+
+        .word-chip.used {
+            opacity: 0.3;
+            cursor: default;
+            transform: none;
+            background: #edf2f7;
+        }
+
+        .word-chip.used:hover {
+            border-color: #cbd5e0;
+            background: #edf2f7;
+            transform: none;
+        }
+
+        .fitb-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 16px;
+        }
+
+        .btn-sm {
+            padding: 10px 24px;
+            font-size: 0.95rem;
+        }
+
+        .correction-line {
+            font-size: 0.85rem;
+            color: var(--correct);
+            font-weight: 600;
+            font-style: normal;
+            display: block;
+            margin-top: 2px;
+        }
+
+        .verse-score-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .verse-score-badge.perfect { background: #c6f6d5; color: #276749; }
+        .verse-score-badge.good { background: #fefcbf; color: #975a16; }
+        .verse-score-badge.needs-work { background: #fed7d7; color: #9b2c2c; }
+
+        .mode-card {
+            border: 3px solid #e2e8f0;
+            padding: 24px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            background: white;
+        }
+
+        .mode-card:hover {
+            border-color: var(--accent);
+        }
+
+        .mode-card.selected {
+            border-color: var(--accent);
+            background: #fffdf5;
+            box-shadow: 0 0 0 1px var(--accent);
+        }
+
+        .mode-card .mode-icon {
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+        }
+
+        .mode-card .mode-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .mode-card .mode-desc {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .mode-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        /* --- Progress System --- */
+        .profile-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border-radius: var(--border-radius);
+            padding: 20px 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 16px rgba(30,58,95,0.2);
+            cursor: pointer;
+            transition: transform 0.15s;
+        }
+
+        .profile-card:hover { transform: translateY(-1px); }
+
+        .profile-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .profile-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .level-badge {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            border: 3px solid var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .profile-info .profile-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .profile-info .profile-rank {
+            font-size: 0.85rem;
+            opacity: 0.85;
+        }
+
+        .profile-right {
+            text-align: right;
+        }
+
+        .profile-right .xp-text {
+            font-size: 0.8rem;
+            opacity: 0.75;
+        }
+
+        .profile-right .xp-num {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .xp-bar-bg {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .xp-bar-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 4px;
+            transition: width 0.6s ease;
+        }
+
+        .xp-bar-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+
+        .stats-panel {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+
+        .stats-panel h3 {
+            color: var(--primary);
+            font-size: 1.1rem;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .stats-panel .close-stats {
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            cursor: pointer;
+            color: var(--text-light);
+            padding: 0 4px;
+        }
+
+        .lifetime-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .lifetime-stat {
+            background: var(--bg);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .lifetime-stat .ls-num {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .lifetime-stat .ls-label {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-top: 2px;
+        }
+
+        .reset-progress-btn {
+            margin-top: 16px;
+            background: none;
+            border: 1px solid #e2e8f0;
+            color: var(--text-light);
+            padding: 8px 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            width: 100%;
+            transition: all 0.2s;
+        }
+
+        .reset-progress-btn:hover {
+            border-color: var(--incorrect);
+            color: var(--incorrect);
+        }
+
+        .levelup-toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: white;
+            border-radius: 20px;
+            padding: 40px 48px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .levelup-toast.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+            pointer-events: auto;
+        }
+
+        .levelup-toast .lu-icon { font-size: 3rem; margin-bottom: 8px; }
+        .levelup-toast .lu-title { font-size: 1.5rem; font-weight: 800; color: var(--primary); margin-bottom: 4px; }
+        .levelup-toast .lu-level { font-size: 2rem; font-weight: 800; color: var(--accent); margin-bottom: 4px; }
+        .levelup-toast .lu-rank { font-size: 1rem; color: var(--text-light); margin-bottom: 16px; }
+
+        .levelup-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .levelup-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .xp-gain {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .xp-gain .xp-amount {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .xp-gain .xp-label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 6px;
+        }
+
+        .volume-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .volume-chip {
+            padding: 10px 8px;
+            border: 2px solid #cbd5e0;
+            border-radius: var(--border-radius);
+            background: white;
+            cursor: pointer;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            user-select: none;
+            color: var(--text);
+        }
+
+        .volume-chip:hover {
+            border-color: var(--accent);
+        }
+
+        .volume-chip.selected {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+            font-weight: 700;
+        }
+
+        .volume-chip .vol-icon {
+            display: block;
+            font-size: 1.4rem;
+            margin-bottom: 4px;
+        }
+
+        .trivia-settings, .fitb-settings {
+            transition: all 0.3s;
+        }
+
+        .hidden { display: none !important; }
+
+        @media (max-width: 500px) {
+            .header h1 { font-size: 1.4rem; }
+            .question-text { font-size: 1.05rem; }
+            .card { padding: 20px; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .mode-grid { grid-template-columns: 1fr; }
+            .volume-grid { grid-template-columns: 1fr 1fr; }
+            .verse-text { font-size: 1.05rem; line-height: 2; }
+            .blank-slot { min-width: 60px; font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>Scripture Trivia</h1>
+    <p>Test your knowledge of the scriptures</p>
+</div>
+
+<div class="container">
+    <!-- Level Up Toast -->
+    <div class="levelup-overlay" id="levelupOverlay" onclick="closeLevelUp()"></div>
+    <div class="levelup-toast" id="levelupToast">
+        <div class="lu-icon">&#x2B50;</div>
+        <div class="lu-title">Level Up!</div>
+        <div class="lu-level" id="luLevel"></div>
+        <div class="lu-rank" id="luRank"></div>
+        <button class="btn btn-sm" onclick="closeLevelUp()">Awesome!</button>
+    </div>
+
+    <!-- Start Screen -->
+    <div id="startScreen" class="screen active">
+        <!-- Profile Card -->
+        <div class="profile-card" id="profileCard" onclick="toggleStats()">
+            <div class="profile-top">
+                <div class="profile-left">
+                    <div class="level-badge" id="levelBadge">1</div>
+                    <div class="profile-info">
+                        <div class="profile-title" id="profileRank">Scripture Beginner</div>
+                        <div class="profile-rank">Tap to view stats</div>
+                    </div>
+                </div>
+                <div class="profile-right">
+                    <div class="xp-text">Total XP</div>
+                    <div class="xp-num" id="profileXP">0</div>
+                </div>
+            </div>
+            <div class="xp-bar-bg">
+                <div class="xp-bar-fill" id="xpBarFill" style="width:0%"></div>
+            </div>
+            <div class="xp-bar-label">
+                <span id="xpCurrent">0 XP</span>
+                <span id="xpNext">Next: 100 XP</span>
+            </div>
+        </div>
+
+        <!-- Stats Panel (hidden by default) -->
+        <div class="stats-panel hidden" id="statsPanel">
+            <h3>Lifetime Stats <button class="close-stats" onclick="toggleStats()">&times;</button></h3>
+            <div class="lifetime-stats">
+                <div class="lifetime-stat"><div class="ls-num" id="lsGames">0</div><div class="ls-label">Games Played</div></div>
+                <div class="lifetime-stat"><div class="ls-num" id="lsCorrect">0</div><div class="ls-label">Correct Answers</div></div>
+                <div class="lifetime-stat"><div class="ls-num" id="lsStreak">0</div><div class="ls-label">Best Streak</div></div>
+                <div class="lifetime-stat"><div class="ls-num" id="lsPerfect">0</div><div class="ls-label">Perfect Games</div></div>
+                <div class="lifetime-stat"><div class="ls-num" id="lsAccuracy">0%</div><div class="ls-label">Accuracy</div></div>
+                <div class="lifetime-stat"><div class="ls-num" id="lsLevel">1</div><div class="ls-label">Current Level</div></div>
+            </div>
+            <button class="reset-progress-btn" onclick="resetProgress()">Reset All Progress</button>
+        </div>
+
+        <div class="card start-screen">
+            <div class="title-area">
+                <div class="icon">&#x1F4D6;</div>
+                <h2>Ready to Play?</h2>
+                <p>Choose your settings and begin</p>
+            </div>
+
+            <div class="setting-group">
+                <label>Scripture Volume</label>
+                <div class="volume-grid" id="volumeGrid">
+                    <div class="volume-chip selected" data-value="all" onclick="selectVolume(this)"><span class="vol-icon">&#x1F4DA;</span>All Volumes</div>
+                    <div class="volume-chip" data-value="bom" onclick="selectVolume(this)"><span class="vol-icon">&#x1F4D8;</span>Book of Mormon</div>
+                    <div class="volume-chip" data-value="ot" onclick="selectVolume(this)"><span class="vol-icon">&#x1F4DC;</span>Old Testament</div>
+                    <div class="volume-chip" data-value="nt" onclick="selectVolume(this)"><span class="vol-icon">&#x2721;&#xFE0F;</span>New Testament</div>
+                    <div class="volume-chip" data-value="dc" onclick="selectVolume(this)"><span class="vol-icon">&#x1F4D6;</span>D&amp;C</div>
+                    <div class="volume-chip" data-value="pgp" onclick="selectVolume(this)"><span class="vol-icon">&#x1F48E;</span>Pearl of Great Price</div>
+                </div>
+            </div>
+
+            <div class="setting-group hidden" id="bookFilterGroup">
+                <label>Book / Section</label>
+                <div class="pill-group" id="bookPills">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <label>Game Mode</label>
+                <div class="mode-grid">
+                    <div class="mode-card selected" data-mode="trivia" onclick="selectMode('trivia')">
+                        <div class="mode-icon">&#x2753;</div>
+                        <div class="mode-title">Trivia</div>
+                        <div class="mode-desc">Multiple choice questions</div>
+                    </div>
+                    <div class="mode-card" data-mode="fitb" onclick="selectMode('fitb')">
+                        <div class="mode-icon">&#x270D;&#xFE0F;</div>
+                        <div class="mode-title">Fill in the Blanks</div>
+                        <div class="mode-desc">Complete scripture verses from a word pile</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="trivia-settings" id="triviaSettings">
+                <div class="setting-group">
+                    <label>Category</label>
+                    <div class="pill-group" id="categoryPills">
+                        <div class="pill selected" data-value="all">All Categories</div>
+                        <div class="pill" data-value="people">People</div>
+                        <div class="pill" data-value="places">Places</div>
+                        <div class="pill" data-value="events">Events</div>
+                        <div class="pill" data-value="scripture">Scripture & Doctrine</div>
+                        <div class="pill" data-value="books">Books & Structure</div>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <label>Difficulty</label>
+                    <div class="pill-group" id="difficultyPills">
+                        <div class="pill selected" data-value="all">All Levels</div>
+                        <div class="pill" data-value="easy">Easy</div>
+                        <div class="pill" data-value="medium">Medium</div>
+                        <div class="pill" data-value="hard">Hard</div>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <label>Number of Questions</label>
+                    <div class="pill-group" id="countPills">
+                        <div class="pill" data-value="10">10</div>
+                        <div class="pill selected" data-value="20">20</div>
+                        <div class="pill" data-value="50">50</div>
+                        <div class="pill" data-value="all">All</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="fitb-settings hidden" id="fitbSettings">
+                <div class="setting-group">
+                    <label>Difficulty</label>
+                    <div class="pill-group" id="fitbDifficultyPills">
+                        <div class="pill selected" data-value="all">All Levels</div>
+                        <div class="pill" data-value="easy">Easy</div>
+                        <div class="pill" data-value="medium">Medium</div>
+                        <div class="pill" data-value="hard">Hard</div>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <label>Number of Verses</label>
+                    <div class="pill-group" id="fitbCountPills">
+                        <div class="pill" data-value="5">5</div>
+                        <div class="pill selected" data-value="10">10</div>
+                        <div class="pill" data-value="20">20</div>
+                        <div class="pill" data-value="all">All</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-center">
+                <button class="btn" onclick="startCurrentMode()">Start Game</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="gameScreen" class="screen">
+        <div class="game-hud">
+            <button class="quit-btn" onclick="quitGame()">&larr; Quit</button>
+            <div class="hud-item"><span class="label">Question</span> <span id="hudQuestion">1/20</span></div>
+            <div class="hud-item"><span class="label">Score</span> <span id="hudScore">0</span></div>
+            <div class="hud-item"><span class="label">Streak</span> <span id="hudStreak">0 🔥</span></div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="streak-indicator" id="streakIndicator"></div>
+        <div class="card" id="questionCard">
+            <!-- Filled dynamically -->
+        </div>
+        <div class="next-btn-area" id="nextBtnArea" style="display:none;">
+            <button class="btn" onclick="nextQuestion()">Next Question →</button>
+        </div>
+    </div>
+
+    <!-- Fill in the Blanks Screen -->
+    <div id="fitbScreen" class="screen">
+        <div class="game-hud">
+            <button class="quit-btn" onclick="quitGame()">&larr; Quit</button>
+            <div class="hud-item"><span class="label">Verse</span> <span id="fitbHudQuestion">1/10</span></div>
+            <div class="hud-item"><span class="label">Score</span> <span id="fitbHudScore">0</span></div>
+            <div class="hud-item"><span class="label">Perfect</span> <span id="fitbHudPerfect">0</span></div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="fitbProgressFill"></div></div>
+        <div class="card" id="fitbCard">
+            <!-- Filled dynamically -->
+        </div>
+        <div class="next-btn-area" id="fitbNextBtnArea" style="display:none;">
+            <button class="btn" onclick="fitbNextVerse()">Next Verse &rarr;</button>
+        </div>
+    </div>
+
+    <!-- Results Screen -->
+    <div id="resultsScreen" class="screen">
+        <div class="card results-screen">
+            <div class="score-circle">
+                <div class="score-num" id="finalPercent">0%</div>
+                <div class="score-label">Score</div>
+            </div>
+            <div class="results-message" id="resultsMessage"></div>
+            <div class="results-sub" id="resultsSub"></div>
+            <div class="xp-gain" id="xpGainArea">
+                <span class="xp-amount" id="xpGainAmount">+0 XP</span>
+                <span class="xp-label" id="xpGainLabel"></span>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-num" id="statCorrect">0</div>
+                    <div class="stat-label">Correct</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-num" id="statWrong">0</div>
+                    <div class="stat-label">Wrong</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-num" id="statStreak">0</div>
+                    <div class="stat-label">Best Streak</div>
+                </div>
+            </div>
+            <div class="results-actions">
+                <button class="btn" onclick="replayCurrentMode()">Play Again</button>
+                <button class="btn btn-secondary" onclick="backToStart()">Change Settings</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const QUESTIONS = [
+    // ============ PEOPLE - EASY ============
+    {
+        volume: "bom", category: "people", difficulty: "easy",
+        question: "Who was the first prophet in the Book of Mormon?",
+        answers: ["Lehi", "Nephi", "Mormon", "Moroni"],
+        correct: 0,
+        explanation: "Lehi was the first prophet in the Book of Mormon. He lived in Jerusalem around 600 B.C. and was commanded by God to take his family into the wilderness."
+    },
+    {
+        volume: "bom", category: "people", difficulty: "easy",
+        question: "Who wrote most of the Book of Mormon's abridgment?",
+        answers: ["Mormon", "Moroni", "Nephi", "Alma"],
+        correct: 0,
+        explanation: "Mormon was the prophet-historian who compiled and abridged the records of his people. The book is named after him."
+    },
+    {
+        volume: "bom", category: "people", difficulty: "easy",
+        question: "Who was Nephi's father?",
+        answers: ["Lehi", "Laman", "Ishmael", "Zoram"],
+        correct: 0,
+        explanation: "Lehi was Nephi's father. Lehi had a vision commanding him to leave Jerusalem with his family."
+    },
+    {
+        volume: "bom", category: "people", difficulty: "easy",
+        question: "Who were Nephi's rebellious older brothers?",
+        answers: ["Laman and Lemuel", "Sam and Jacob", "Mosiah and Alma", "Ammon and Aaron"],
+        correct: 0,
+        explanation: "Laman and Lemuel were Nephi's older brothers who frequently rebelled against their father Lehi and brother Nephi."
+    },
+    {
+        volume: "bom", category: "people", difficulty: "easy",
+        question: "Who was the last Nephite prophet to write in the Book of Mormon?",
+        answers: ["Moroni", "Mormon", "Nephi", "Ether"],
+        correct: 0,
+        explanation: "Moroni, son of Mormon, was the last Nephite prophet. He finished his father's record, added his own writings, and buried the plates."
+    },
+    {
+        volume: "bom", category: "people", difficulty: "easy",
+        question: "Who was the Nephite captain known for his title of liberty?",
+        answers: ["Captain Moroni", "Helaman", "Teancum", "Gidgiddoni"],
+        correct: 0,
+        explanation: "Captain Moroni rent his coat and wrote upon it 'In memory of our God, our religion, and freedom, and our peace, our wives, and our children' creating the title of liberty (Alma 46)."
+    },
+    {
+        volume: "bom", category: "people", difficulty: "easy",
+        question: "Who led the 2,000 stripling warriors?",
+        answers: ["Helaman", "Captain Moroni", "Alma", "Ammon"],
+        correct: 0,
+        explanation: "Helaman led the 2,000 young Ammonite warriors, often called the stripling warriors, who were renowned for their faith and courage in battle."
+    },
+    {
+        volume: "bom", category: "people", difficulty: "easy",
+        question: "What king converted to the gospel after Ammon served him?",
+        answers: ["King Lamoni", "King Noah", "King Benjamin", "King Mosiah"],
+        correct: 0,
+        explanation: "King Lamoni was a Lamanite king who was converted after Ammon defended his flocks and taught him the gospel."
+    },
+    // ============ PEOPLE - MEDIUM ============
+    {
+        volume: "bom", category: "people", difficulty: "medium",
+        question: "Who was the wicked priest who killed the prophet Abinadi?",
+        answers: ["King Noah", "Zeezrom", "Nehor", "Amalickiah"],
+        correct: 0,
+        explanation: "King Noah was the wicked king who ordered the death of Abinadi after Abinadi prophesied against him and his priests."
+    },
+    {
+        volume: "bom", category: "people", difficulty: "medium",
+        question: "Which of King Noah's priests believed Abinadi and later baptized converts?",
+        answers: ["Alma", "Amulek", "Ammon", "Aaron"],
+        correct: 0,
+        explanation: "Alma (later known as Alma the Elder) was one of King Noah's priests who believed Abinadi's words, repented, and began baptizing people at the Waters of Mormon."
+    },
+    {
+        volume: "bom", category: "people", difficulty: "medium",
+        question: "Who was Alma the Younger's missionary companion in Ammonihah?",
+        answers: ["Amulek", "Ammon", "Zeezrom", "Aaron"],
+        correct: 0,
+        explanation: "Amulek was Alma's missionary companion in the city of Ammonihah. He was a wealthy resident of the city whom an angel directed to receive Alma."
+    },
+    {
+        volume: "bom", category: "people", difficulty: "medium",
+        question: "Who was the Anti-Christ who challenged Alma and was struck dumb?",
+        answers: ["Korihor", "Sherem", "Nehor", "Zeezrom"],
+        correct: 0,
+        explanation: "Korihor was an Anti-Christ who preached that there would be no Christ. He demanded a sign and was struck dumb as a consequence (Alma 30)."
+    },
+    {
+        volume: "bom", category: "people", difficulty: "medium",
+        question: "Who was the Lamanite king who was the father of King Lamoni?",
+        answers: ["The old Lamanite king (unnamed father of Lamoni)", "Anti-Nephi-Lehi", "Amalickiah", "Ammoron"],
+        correct: 0,
+        explanation: "Lamoni's father was the king over all the Lamanites. He was also converted by Aaron, one of the sons of Mosiah."
+    },
+    {
+        volume: "bom", category: "people", difficulty: "medium",
+        question: "What did the sons of Mosiah choose to do instead of becoming king?",
+        answers: ["Go on missions to the Lamanites", "Become judges", "Lead the army", "Build a temple"],
+        correct: 0,
+        explanation: "The sons of Mosiah (Ammon, Aaron, Omner, and Himni) chose to preach the gospel among the Lamanites rather than accept the kingship."
+    },
+    {
+        volume: "bom", category: "people", difficulty: "medium",
+        question: "Who killed Laban to obtain the brass plates?",
+        answers: ["Nephi", "Laman", "Sam", "Zoram"],
+        correct: 0,
+        explanation: "Nephi was commanded by the Spirit to slay Laban in order to obtain the brass plates, which contained the scriptures and genealogy of Lehi's family (1 Nephi 4)."
+    },
+    {
+        volume: "bom", category: "people", difficulty: "medium",
+        question: "Who was the brother of Jared?",
+        answers: ["Mahonri Moriancumer", "Coriantumr", "Ether", "Shiz"],
+        correct: 0,
+        explanation: "The brother of Jared's name is given in tradition as Mahonri Moriancumer. He was known for his great faith, which allowed him to see the finger of the Lord."
+    },
+    {
+        volume: "bom", category: "people", difficulty: "medium",
+        question: "Who was the Nephite prophet who was burned by the people of King Noah?",
+        answers: ["Abinadi", "Samuel", "Nephi", "Alma"],
+        correct: 0,
+        explanation: "Abinadi was the prophet who preached repentance to King Noah and his people. He was executed by fire for refusing to deny his testimony."
+    },
+    {
+        volume: "bom", category: "people", difficulty: "medium",
+        question: "Who was the Lamanite prophet who stood on the walls of Zarahemla to prophesy?",
+        answers: ["Samuel the Lamanite", "Abinadi", "Ammon", "Helaman"],
+        correct: 0,
+        explanation: "Samuel the Lamanite stood on the city wall of Zarahemla and prophesied of Christ's birth and death, including signs that would accompany those events (Helaman 13-15)."
+    },
+    // ============ PEOPLE - HARD ============
+    {
+        volume: "bom", category: "people", difficulty: "hard",
+        question: "Who was the servant of King Lamoni who had his arms cut off while defending the king's flocks alongside Ammon?",
+        answers: ["No one — it was the attackers whose arms Ammon cut off", "Lamoni's chief servant", "Abish", "Lehonti"],
+        correct: 0,
+        explanation: "It was not a servant who lost arms — Ammon cut off the arms of the attackers at the waters of Sebus. The servants gathered the severed arms to show King Lamoni."
+    },
+    {
+        volume: "bom", category: "people", difficulty: "hard",
+        question: "Who was the Lamanite woman servant who helped spread the gospel after King Lamoni and his household fell to the earth?",
+        answers: ["Abish", "Sariah", "Isabel", "The queen of Lamoni"],
+        correct: 0,
+        explanation: "Abish was a Lamanite woman who had been secretly converted years earlier. When King Lamoni's household fell as if dead, she ran from house to house gathering people to witness the miracle (Alma 19)."
+    },
+    {
+        volume: "bom", category: "people", difficulty: "hard",
+        question: "Who was the dissenter who stirred up the Lamanites and eventually became their king through treachery?",
+        answers: ["Amalickiah", "Zerahemnah", "Coriantumr", "Ammoron"],
+        correct: 0,
+        explanation: "Amalickiah was a Nephite dissenter who through a series of treacherous plots, including poisoning the Lamanite king, made himself king over the Lamanites and led them to war against the Nephites."
+    },
+    {
+        volume: "bom", category: "people", difficulty: "hard",
+        question: "What was the name of the first Anti-Christ mentioned in the Book of Mormon?",
+        answers: ["Sherem", "Korihor", "Nehor", "Zeezrom"],
+        correct: 0,
+        explanation: "Sherem was the first Anti-Christ in the Book of Mormon. He confronted Jacob, denied the Christ, demanded a sign, and was smitten by God (Jacob 7)."
+    },
+    {
+        volume: "bom", category: "people", difficulty: "hard",
+        question: "Who was Nephi's brother that supported him faithfully but is rarely mentioned?",
+        answers: ["Sam", "Jacob", "Joseph", "Zoram"],
+        correct: 0,
+        explanation: "Sam, Nephi's brother, consistently supported Nephi and his father Lehi. Despite being mentioned less often than Laman and Lemuel, he was faithful throughout."
+    },
+    {
+        volume: "bom", category: "people", difficulty: "hard",
+        question: "Who was the chief judge who was murdered by Kishkumen?",
+        answers: ["Pahoran (the son)", "Helaman", "Cezoram", "Pacumeni"],
+        correct: 0,
+        explanation: "Pahoran the son (also called Pahoran II) became chief judge and was murdered on the judgment seat by Kishkumen, a member of Gadianton's band."
+    },
+    {
+        volume: "bom", category: "people", difficulty: "hard",
+        question: "Who was the Jaredite prophet who wrote the record found by King Limhi's people?",
+        answers: ["Ether", "Coriantumr", "Moroni", "The brother of Jared"],
+        correct: 0,
+        explanation: "Ether was the last Jaredite prophet who witnessed the destruction of his civilization. His record was found by a group of Limhi's people and later abridged by Moroni."
+    },
+
+    // ============ PLACES - EASY ============
+    {
+        volume: "bom", category: "places", difficulty: "easy",
+        question: "Where did Lehi and his family originally live before leaving for the promised land?",
+        answers: ["Jerusalem", "Babylon", "Egypt", "Zarahemla"],
+        correct: 0,
+        explanation: "Lehi lived in Jerusalem around 600 B.C. He was commanded by God to flee because Jerusalem would be destroyed."
+    },
+    {
+        volume: "bom", category: "places", difficulty: "easy",
+        question: "What body of water did Lehi's family cross to reach the promised land?",
+        answers: ["The ocean (Irreantum/great sea)", "The Red Sea", "The River Jordan", "The Sea of Galilee"],
+        correct: 0,
+        explanation: "Lehi's family built a ship and crossed the great ocean (which they called Irreantum, meaning 'many waters') to reach the promised land."
+    },
+    {
+        volume: "bom", category: "places", difficulty: "easy",
+        question: "What was the major Nephite capital city?",
+        answers: ["Zarahemla", "Bountiful", "Nephi", "Moroni"],
+        correct: 0,
+        explanation: "Zarahemla was the most significant Nephite capital city and the center of Nephite civilization for much of the Book of Mormon."
+    },
+    // ============ PLACES - MEDIUM ============
+    {
+        volume: "bom", category: "places", difficulty: "medium",
+        question: "Where did Alma the Elder baptize his converts?",
+        answers: ["The Waters of Mormon", "The River Sidon", "The Waters of Sebus", "The Sea West"],
+        correct: 0,
+        explanation: "Alma baptized believers at the Waters of Mormon, a place near a thicket of trees where they hid from King Noah's soldiers (Mosiah 18)."
+    },
+    {
+        volume: "bom", category: "places", difficulty: "medium",
+        question: "In what land did the people of Nephi originally settle after separating from the Lamanites?",
+        answers: ["The land of Nephi", "The land of Zarahemla", "The land of Bountiful", "The land of Desolation"],
+        correct: 0,
+        explanation: "After separating from Laman and Lemuel, Nephi led his people to the land of Nephi where they built a temple and prospered."
+    },
+    {
+        volume: "bom", category: "places", difficulty: "medium",
+        question: "What is the name of the hill where Mormon hid the sacred records?",
+        answers: ["The Hill Cumorah", "The Hill Shim", "The Hill Onidah", "The Hill Riplah"],
+        correct: 0,
+        explanation: "Mormon hid the records in the Hill Cumorah (also called the Hill Ramah by the Jaredites). Moroni later buried the abridged record in a hill where Joseph Smith recovered them."
+    },
+    {
+        volume: "bom", category: "places", difficulty: "medium",
+        question: "Where did Christ appear to the Nephites after his resurrection?",
+        answers: ["The land Bountiful, at the temple", "Zarahemla", "The land of Nephi", "The Hill Cumorah"],
+        correct: 0,
+        explanation: "Jesus Christ appeared to the Nephites at the temple in the land Bountiful after his resurrection (3 Nephi 11)."
+    },
+    {
+        volume: "bom", category: "places", difficulty: "medium",
+        question: "What was the name of the city where Alma and Amulek preached and where believers were burned?",
+        answers: ["Ammonihah", "Zarahemla", "Gideon", "Melek"],
+        correct: 0,
+        explanation: "The city of Ammonihah was extremely wicked. After Alma and Amulek preached there, believers and their scriptures were burned. The city was later destroyed (Alma 8-16)."
+    },
+    // ============ PLACES - HARD ============
+    {
+        volume: "bom", category: "places", difficulty: "hard",
+        question: "What was the valley where Lehi's family first camped after leaving Jerusalem?",
+        answers: ["The Valley of Lemuel", "The Valley of Nimrod", "The Valley of Alma", "The Valley of Gideon"],
+        correct: 0,
+        explanation: "Lehi's family camped in the Valley of Lemuel, near a river that Lehi named after his son Laman, hoping they would be steadfast like the river (1 Nephi 2)."
+    },
+    {
+        volume: "bom", category: "places", difficulty: "hard",
+        question: "What land was described as the 'land of desolation' because of the Jaredite destruction?",
+        answers: ["The land Desolation", "The land of Moron", "The land of Zarahemla", "The land Bountiful"],
+        correct: 0,
+        explanation: "The land Desolation was named so because it was the area where the Jaredite civilization was destroyed. It was north of the land Bountiful."
+    },
+    {
+        volume: "bom", category: "places", difficulty: "hard",
+        question: "What major river flowed through the center of the Nephite lands?",
+        answers: ["The River Sidon", "The River Laman", "The River Irreantum", "The River Jordan"],
+        correct: 0,
+        explanation: "The River Sidon was the most prominent river in the Book of Mormon, flowing through Nephite territory. Several battles were fought near its banks."
+    },
+    {
+        volume: "bom", category: "places", difficulty: "hard",
+        question: "In what place did the Jaredites begin their journey?",
+        answers: ["The great tower (Tower of Babel)", "Jerusalem", "Egypt", "The land of Moron"],
+        correct: 0,
+        explanation: "The Jaredites originated at the time of the great tower (Tower of Babel) when the Lord confounded the languages. The brother of Jared prayed that their language would not be confounded (Ether 1)."
+    },
+
+    // ============ EVENTS - EASY ============
+    {
+        volume: "bom", category: "events", difficulty: "easy",
+        question: "What object guided Lehi's family through the wilderness?",
+        answers: ["The Liahona", "The Urim and Thummim", "The brass plates", "A pillar of fire"],
+        correct: 0,
+        explanation: "The Liahona was a ball of curious workmanship that provided directions through the wilderness. It worked according to their faith and diligence (1 Nephi 16)."
+    },
+    {
+        volume: "bom", category: "events", difficulty: "easy",
+        question: "What did Lehi see in his famous dream?",
+        answers: ["The tree of life", "The destruction of Jerusalem", "The coming of Christ", "A great battle"],
+        correct: 0,
+        explanation: "Lehi's dream featured the tree of life, whose fruit represented the love of God. The dream also included an iron rod, a great and spacious building, and a mist of darkness (1 Nephi 8)."
+    },
+    {
+        volume: "bom", category: "events", difficulty: "easy",
+        question: "What records did Nephi and his brothers return to Jerusalem to obtain?",
+        answers: ["The brass plates", "The gold plates", "The plates of Mormon", "The Jaredite record"],
+        correct: 0,
+        explanation: "Nephi and his brothers returned to Jerusalem to obtain the brass plates from Laban. These plates contained the scriptures and the genealogy of their fathers (1 Nephi 3-4)."
+    },
+    {
+        volume: "bom", category: "events", difficulty: "easy",
+        question: "How did Nephi's family cross the ocean to the promised land?",
+        answers: ["They built a ship", "Angels carried them", "They walked on a land bridge", "They used Jaredite barges"],
+        correct: 0,
+        explanation: "Nephi was instructed by the Lord on how to build a ship. Despite opposition from Laman and Lemuel, the ship was completed and they sailed to the promised land (1 Nephi 17-18)."
+    },
+    {
+        volume: "bom", category: "events", difficulty: "easy",
+        question: "What happened to the Nephite civilization by the end of the Book of Mormon?",
+        answers: ["They were destroyed in a final battle", "They joined the Lamanites peacefully", "They sailed back to Jerusalem", "They were taken to heaven"],
+        correct: 0,
+        explanation: "The Nephites were destroyed in a final battle at the Hill Cumorah. Mormon and Moroni witnessed the end of their civilization around 385 A.D."
+    },
+    // ============ EVENTS - MEDIUM ============
+    {
+        volume: "bom", category: "events", difficulty: "medium",
+        question: "What event did Alma the Younger experience that changed his life?",
+        answers: ["An angel appeared and rebuked him", "He was shipwrecked", "He found the brass plates", "He had a vision of the tree of life"],
+        correct: 0,
+        explanation: "Alma the Younger, along with the sons of Mosiah, was visited by an angel who rebuked them for persecuting the church. Alma fell into a coma-like state and was converted (Mosiah 27)."
+    },
+    {
+        volume: "bom", category: "events", difficulty: "medium",
+        question: "What covenant did the Anti-Nephi-Lehies (converted Lamanites) make?",
+        answers: ["They buried their weapons and vowed never to fight again", "They promised to build a temple", "They agreed to pay tribute to the Nephites", "They vowed to fast for 40 days"],
+        correct: 0,
+        explanation: "The converted Lamanites, called Anti-Nephi-Lehies (later the people of Ammon), buried their weapons deep in the earth as a covenant never to shed blood again (Alma 24)."
+    },
+    {
+        volume: "bom", category: "events", difficulty: "medium",
+        question: "What was remarkable about the 2,000 stripling warriors in battle?",
+        answers: ["Not one of them was killed", "They fought without weapons", "They defeated an army ten times their size", "They fasted before every battle"],
+        correct: 0,
+        explanation: "Though many were wounded, not a single one of the 2,000 stripling warriors was killed in battle. They attributed this to the faith taught them by their mothers (Alma 56-58)."
+    },
+    {
+        volume: "bom", category: "events", difficulty: "medium",
+        question: "What happened at Christ's appearance to the Nephites?",
+        answers: ["He invited them to feel the wounds in his hands and feet", "He appeared as a pillar of fire", "He sent angels to teach them", "He appeared only to the prophets"],
+        correct: 0,
+        explanation: "When Christ appeared at the temple in Bountiful, He invited the people one by one to come forth and feel the prints of the nails in His hands and feet (3 Nephi 11)."
+    },
+    {
+        volume: "bom", category: "events", difficulty: "medium",
+        question: "What signs preceded Christ's death as prophesied by Samuel the Lamanite?",
+        answers: ["Three days of darkness, storms, and earthquakes", "Seven years of famine", "A great flood", "Plague and locusts"],
+        correct: 0,
+        explanation: "Samuel prophesied that at Christ's death there would be three days of darkness, thunderings, lightnings, earthquakes, and destruction of many cities (Helaman 14, 3 Nephi 8)."
+    },
+    {
+        volume: "bom", category: "events", difficulty: "medium",
+        question: "What happened when Nephi's brothers tied him up on the ship?",
+        answers: ["A terrible storm arose and the Liahona stopped working", "The ship sank", "Angels rescued him", "Nothing happened"],
+        correct: 0,
+        explanation: "When Laman and Lemuel bound Nephi on the ship, the Liahona stopped working and a great storm arose, driving the ship backward for four days until they freed him (1 Nephi 18)."
+    },
+    // ============ EVENTS - HARD ============
+    {
+        volume: "bom", category: "events", difficulty: "hard",
+        question: "What system of government replaced the Nephite monarchy?",
+        answers: ["The reign of judges", "A council of elders", "A theocracy led by prophets", "Direct democracy"],
+        correct: 0,
+        explanation: "King Mosiah established the reign of judges, where chief judges were chosen by the voice of the people. Alma the Younger became the first chief judge (Mosiah 29)."
+    },
+    {
+        volume: "bom", category: "events", difficulty: "hard",
+        question: "What happened to the city of Ammonihah after it persecuted believers?",
+        answers: ["It was completely destroyed by a Lamanite army in one day", "It was swallowed by an earthquake", "It repented and was saved", "It was burned by fire from heaven"],
+        correct: 0,
+        explanation: "The city of Ammonihah was destroyed in one day by a Lamanite army. It became known as the 'Desolation of Nehors' and was not rebuilt for many years (Alma 16)."
+    },
+    {
+        volume: "bom", category: "events", difficulty: "hard",
+        question: "How did the brother of Jared provide light for the Jaredite barges?",
+        answers: ["He asked the Lord to touch stones to make them glow", "He used fire", "He used the Liahona", "The barges had no light"],
+        correct: 0,
+        explanation: "The brother of Jared molten 16 small transparent stones from a rock and asked the Lord to touch them. The Lord touched each stone with His finger, making them glow to provide light (Ether 3)."
+    },
+    {
+        volume: "bom", category: "events", difficulty: "hard",
+        question: "What unique thing happened when the brother of Jared saw the Lord's finger touch the stones?",
+        answers: ["He saw the Lord's full spirit body because of his great faith", "He was struck blind temporarily", "The stones exploded", "He fell asleep for three days"],
+        correct: 0,
+        explanation: "Because of the brother of Jared's extraordinary faith, the veil was taken from his eyes and he saw the Lord's spirit body — the premortal Jesus Christ (Ether 3)."
+    },
+    {
+        volume: "bom", category: "events", difficulty: "hard",
+        question: "What happened during the 200 years after Christ's visit to the Nephites?",
+        answers: ["There was complete peace and righteousness with no '-ites'", "The Nephites conquered all their enemies", "They built ships and explored the sea", "There were constant small wars"],
+        correct: 0,
+        explanation: "After Christ's visit, there were nearly 200 years of peace and unity. There were no Lamanites, Nephites, or any manner of '-ites', but they were all one, the children of Christ (4 Nephi)."
+    },
+    {
+        volume: "bom", category: "events", difficulty: "hard",
+        question: "How many Nephites survived the final battle at Cumorah besides Moroni?",
+        answers: ["About 24, but all were eventually killed except Moroni", "None", "Exactly 100", "About 1,000"],
+        correct: 0,
+        explanation: "After the great final battle, there were 24 survivors including Mormon and Moroni. Mormon was killed shortly after, and the others were hunted. Only Moroni survived to finish the record (Mormon 6)."
+    },
+
+    // ============ SCRIPTURE & DOCTRINE - EASY ============
+    {
+        volume: "bom", category: "scripture", difficulty: "easy",
+        question: "According to 2 Nephi 2:25, 'Adam fell that men might be; and men are, that they might have ___.'",
+        answers: ["Joy", "Faith", "Knowledge", "Power"],
+        correct: 0,
+        explanation: "'Adam fell that men might be; and men are, that they might have joy' (2 Nephi 2:25). This is one of the most well-known verses about the purpose of life."
+    },
+    {
+        volume: "bom", category: "scripture", difficulty: "easy",
+        question: "What does the iron rod represent in Lehi's dream?",
+        answers: ["The word of God", "The priesthood", "The law of Moses", "Prayer"],
+        correct: 0,
+        explanation: "The iron rod in Lehi's dream represents the word of God. Those who held to it could navigate through the mist of darkness to reach the tree of life (1 Nephi 11:25)."
+    },
+    {
+        volume: "bom", category: "scripture", difficulty: "easy",
+        question: "What does the tree of life represent in Lehi's dream?",
+        answers: ["The love of God", "The temple", "The promised land", "Eternal life"],
+        correct: 0,
+        explanation: "The tree of life represents the love of God, which is 'most desirable above all things' and 'most joyous to the soul' (1 Nephi 11:22-23)."
+    },
+    {
+        volume: "bom", category: "scripture", difficulty: "easy",
+        question: "What does Moroni 10:4-5 promise to those who sincerely ask God about the Book of Mormon?",
+        answers: ["The Holy Ghost will manifest the truth of it", "Angels will appear to them", "They will have a vision", "They will hear God's voice"],
+        correct: 0,
+        explanation: "Moroni's promise states that if you ask God with a sincere heart, with real intent, having faith in Christ, the Holy Ghost will manifest the truth of the book unto you."
+    },
+    // ============ SCRIPTURE & DOCTRINE - MEDIUM ============
+    {
+        volume: "bom", category: "scripture", difficulty: "medium",
+        question: "What does Alma 32 compare faith to?",
+        answers: ["A seed", "A river", "A fire", "A mountain"],
+        correct: 0,
+        explanation: "Alma compares faith to planting a seed. If the seed is good and you nourish it, it will grow into a tree of life. This teaches the process of developing faith through experimentation (Alma 32)."
+    },
+    {
+        volume: "bom", category: "scripture", difficulty: "medium",
+        question: "What did King Benjamin teach about serving others?",
+        answers: ["When you serve others, you serve God", "Service earns salvation", "Only serve those in your community", "Service is optional for the righteous"],
+        correct: 0,
+        explanation: "'When ye are in the service of your fellow beings ye are only in the service of your God' (Mosiah 2:17). This is one of King Benjamin's most famous teachings."
+    },
+    {
+        volume: "bom", category: "scripture", difficulty: "medium",
+        question: "What did Nephi say when commanded to build a ship?",
+        answers: ["'Whither shall I go that I may find ore to molten?'", "'I cannot build a ship'", "'Send angels to help me'", "'Let my brothers help me'"],
+        correct: 0,
+        explanation: "Rather than questioning God's command, Nephi simply asked where to find ore to make tools. This exemplifies his faithful obedience — he asked 'how,' not 'why' (1 Nephi 17:9)."
+    },
+    {
+        volume: "bom", category: "scripture", difficulty: "medium",
+        question: "According to 2 Nephi 2, what would happen if there were no opposition?",
+        answers: ["There could be no righteousness nor wickedness, no happiness nor misery", "People would be perfect", "Everyone would be saved", "The earth would not exist"],
+        correct: 0,
+        explanation: "Lehi taught that opposition in all things is necessary. Without it, there could be no righteousness nor wickedness, happiness nor misery, and all things would be a 'compound in one' (2 Nephi 2:11)."
+    },
+    {
+        volume: "bom", category: "scripture", difficulty: "medium",
+        question: "What phrase did Nephi use to express his willingness to obey God?",
+        answers: ["'I will go and do'", "'Here am I, send me'", "'Thy will be done'", "'I believe'"],
+        correct: 0,
+        explanation: "'I will go and do the things which the Lord hath commanded, for I know that the Lord giveth no commandments unto the children of men, save he shall prepare a way' (1 Nephi 3:7)."
+    },
+    {
+        volume: "bom", category: "scripture", difficulty: "medium",
+        question: "What did Alma teach about faith, hope, and charity?",
+        answers: ["If you don't have charity, you are nothing", "Faith alone is sufficient", "Hope comes before faith", "Charity is less important than faith"],
+        correct: 0,
+        explanation: "Alma taught that charity is the greatest, saying 'if ye have not charity, ye are nothing' and that charity is 'the pure love of Christ' which endures forever."
+    },
+    // ============ SCRIPTURE & DOCTRINE - HARD ============
+    {
+        volume: "bom", category: "scripture", difficulty: "hard",
+        question: "In Alma 34, what does Amulek teach about the Atonement?",
+        answers: ["It must be an infinite and eternal sacrifice", "It applies only to the faithful", "It was symbolic, not literal", "It covers only past sins"],
+        correct: 0,
+        explanation: "Amulek taught that the Atonement must be an 'infinite and eternal sacrifice' — not a human or animal sacrifice, but the sacrifice of the Son of God to satisfy the demands of justice (Alma 34:10-14)."
+    },
+    {
+        volume: "bom", category: "scripture", difficulty: "hard",
+        question: "What does Ether 12:27 say about weakness?",
+        answers: ["God gives men weakness so they may be humble, and His grace is sufficient for the humble", "Weakness is a punishment for sin", "The strong shall overcome the weak", "Weakness cannot be overcome in this life"],
+        correct: 0,
+        explanation: "'If men come unto me I will show unto them their weakness... my grace is sufficient for all men that humble themselves before me; for if they humble themselves... then will I make weak things become strong' (Ether 12:27)."
+    },
+    {
+        volume: "bom", category: "scripture", difficulty: "hard",
+        question: "According to 2 Nephi 31, what is the 'doctrine of Christ'?",
+        answers: ["Faith, repentance, baptism, Holy Ghost, and enduring to the end", "The Ten Commandments", "The Sermon on the Mount only", "Temple ordinances"],
+        correct: 0,
+        explanation: "Nephi describes the doctrine of Christ as faith in Christ, repentance, baptism by water, receiving the Holy Ghost, and enduring to the end. He calls this the 'gate' by which we enter the path (2 Nephi 31)."
+    },
+    {
+        volume: "bom", category: "scripture", difficulty: "hard",
+        question: "What does Mormon 9:31 say about the imperfections of the record?",
+        answers: ["'If there are faults they are the mistakes of men; condemn not the things of God'", "'The record is perfect in every way'", "'Only the words of Christ are without error'", "'The errors were corrected by Moroni'"],
+        correct: 0,
+        explanation: "Mormon and Moroni both acknowledged that the record might contain errors, saying 'if there are faults they are the mistakes of men; wherefore, condemn not the things of God' (Mormon 9:31)."
+    },
+    {
+        volume: "bom", category: "scripture", difficulty: "hard",
+        question: "What does Alma 42 teach about the relationship between justice and mercy?",
+        answers: ["Mercy cannot rob justice; the Atonement satisfies both", "Justice is more important than mercy", "Mercy replaces justice entirely", "They are the same thing"],
+        correct: 0,
+        explanation: "Alma teaches his son Corianton that mercy cannot rob justice. The Atonement of Christ satisfies the demands of justice, allowing mercy to claim the penitent (Alma 42)."
+    },
+
+    // ============ BOOKS & STRUCTURE - EASY ============
+    {
+        volume: "bom", category: "books", difficulty: "easy",
+        question: "How many main books are in the Book of Mormon?",
+        answers: ["15", "10", "20", "27"],
+        correct: 0,
+        explanation: "The Book of Mormon contains 15 books: 1 Nephi, 2 Nephi, Jacob, Enos, Jarom, Omni, Words of Mormon, Mosiah, Alma, Helaman, 3 Nephi, 4 Nephi, Mormon, Ether, and Moroni."
+    },
+    {
+        volume: "bom", category: "books", difficulty: "easy",
+        question: "What is the first book in the Book of Mormon?",
+        answers: ["1 Nephi", "Mosiah", "Lehi", "Genesis"],
+        correct: 0,
+        explanation: "1 Nephi is the first book in the Book of Mormon, written by Nephi, son of Lehi."
+    },
+    {
+        volume: "bom", category: "books", difficulty: "easy",
+        question: "What is the last book in the Book of Mormon?",
+        answers: ["Moroni", "Mormon", "Ether", "4 Nephi"],
+        correct: 0,
+        explanation: "The Book of Moroni is the last book, containing Moroni's final writings, including his famous promise in chapter 10."
+    },
+    {
+        volume: "bom", category: "books", difficulty: "easy",
+        question: "Which book in the Book of Mormon is the longest?",
+        answers: ["Alma", "Mosiah", "3 Nephi", "Helaman"],
+        correct: 0,
+        explanation: "The Book of Alma is the longest book in the Book of Mormon with 63 chapters, covering wars, missions, and doctrinal teachings."
+    },
+    // ============ BOOKS & STRUCTURE - MEDIUM ============
+    {
+        volume: "bom", category: "books", difficulty: "medium",
+        question: "What book records the Jaredite civilization?",
+        answers: ["Ether", "Omni", "Moroni", "Mormon"],
+        correct: 0,
+        explanation: "The Book of Ether contains the abridged record of the Jaredite civilization, which predated the Nephites. It was abridged by Moroni from the 24 gold plates found by Limhi's people."
+    },
+    {
+        volume: "bom", category: "books", difficulty: "medium",
+        question: "What are the 'small plates of Nephi'?",
+        answers: ["A record focused on spiritual matters, covering 1 Nephi through Omni", "The abridgment made by Mormon", "The brass plates from Laban", "The 24 gold plates of the Jaredites"],
+        correct: 0,
+        explanation: "The small plates of Nephi were a separate set of plates focused on spiritual and prophetic matters rather than history. They cover 1 Nephi through Omni and replace the lost 116 pages."
+    },
+    {
+        volume: "bom", category: "books", difficulty: "medium",
+        question: "What is the shortest book in the Book of Mormon?",
+        answers: ["Jarom (15 verses)", "Enos", "Omni", "Words of Mormon"],
+        correct: 0,
+        explanation: "The Book of Jarom is the shortest, containing only 15 verses. It covers about 60 years of Nephite history in a brief summary."
+    },
+    {
+        volume: "bom", category: "books", difficulty: "medium",
+        question: "Which book contains Christ's sermon to the Nephites, similar to the Sermon on the Mount?",
+        answers: ["3 Nephi", "Moroni", "Alma", "Mosiah"],
+        correct: 0,
+        explanation: "3 Nephi chapters 12-14 contain Christ's teachings to the Nephites, which parallel the Sermon on the Mount found in Matthew 5-7."
+    },
+    {
+        volume: "bom", category: "books", difficulty: "medium",
+        question: "What does 'Words of Mormon' serve as in the Book of Mormon?",
+        answers: ["A bridge connecting the small plates to Mormon's abridgment", "The final testimony of Mormon", "An index of all the books", "A translation guide"],
+        correct: 0,
+        explanation: "Words of Mormon is a brief explanatory insert by Mormon that bridges the small plates of Nephi (1 Nephi through Omni) with his abridgment of the large plates (beginning with Mosiah)."
+    },
+    // ============ BOOKS & STRUCTURE - HARD ============
+    {
+        volume: "bom", category: "books", difficulty: "hard",
+        question: "What happened to the first 116 pages of the Book of Mormon translation?",
+        answers: ["Martin Harris lost them, and the Lord told Joseph not to re-translate them", "They were burned in a fire", "Joseph Smith destroyed them", "They were returned to Moroni"],
+        correct: 0,
+        explanation: "Martin Harris took the first 116 pages to show his wife, and they were lost. The Lord told Joseph Smith not to re-translate them because enemies would alter the originals. Instead, the small plates of Nephi covered the same period."
+    },
+    {
+        volume: "bom", category: "books", difficulty: "hard",
+        question: "The book of Enos is notable for what event?",
+        answers: ["Enos's extended personal prayer and wrestle before God", "A great battle with the Lamanites", "The building of a new city", "A visit from angels"],
+        correct: 0,
+        explanation: "The Book of Enos centers on Enos's powerful, extended prayer in which he wrestled before God, received forgiveness for his sins, and then prayed for his people and even the Lamanites."
+    },
+    {
+        volume: "bom", category: "books", difficulty: "hard",
+        question: "How many authors contributed to the Book of Omni?",
+        answers: ["Five (Omni, Amaron, Chemish, Abinadom, Amaleki)", "One", "Two", "Three"],
+        correct: 0,
+        explanation: "Despite being only 30 verses, the Book of Omni has five different authors: Omni, Amaron, Chemish, Abinadom, and Amaleki. Each wrote briefly before passing the plates on."
+    },
+    {
+        volume: "bom", category: "books", difficulty: "hard",
+        question: "What sealed portion of the plates was Moroni commanded not to reveal?",
+        answers: ["The vision of the brother of Jared showing the history of the world", "The location of Nephite cities", "The names of the Three Nephites", "The words of the sealed book of Isaiah"],
+        correct: 0,
+        explanation: "The brother of Jared received a vision of the entire history of the world from beginning to end. Moroni was commanded to seal this portion, to be revealed at a future time (Ether 4)."
+    },
+
+    // ============ ADDITIONAL MIXED QUESTIONS ============
+    {
+        volume: "bom", category: "people", difficulty: "medium",
+        question: "What did Ammon do to impress King Lamoni?",
+        answers: ["Defended the king's flocks and cut off attackers' arms", "Built a palace for the king", "Healed the king's son", "Won a battle against another kingdom"],
+        correct: 0,
+        explanation: "Ammon volunteered to be a servant and watch the king's flocks. When robbers scattered the flocks at the waters of Sebus, Ammon defended them with his sling and sword, cutting off the arms of those who attacked (Alma 17)."
+    },
+    {
+        volume: "bom", category: "events", difficulty: "medium",
+        question: "What natural disasters occurred at the time of Christ's crucifixion in the Americas?",
+        answers: ["Earthquakes, fires, whirlwinds, and three days of darkness", "A great flood", "A volcanic eruption only", "A plague"],
+        correct: 0,
+        explanation: "Massive earthquakes destroyed cities, fires burned others, whirlwinds carried people away, and three days of thick darkness covered the land (3 Nephi 8)."
+    },
+    {
+        volume: "bom", category: "scripture", difficulty: "easy",
+        question: "What does the great and spacious building represent in Lehi's dream?",
+        answers: ["The pride of the world", "The temple", "Heaven", "The Nephite government"],
+        correct: 0,
+        explanation: "The great and spacious building represents the pride of the world and the vain imaginations of the children of men. People in it mocked those partaking of the fruit (1 Nephi 11:36)."
+    },
+    {
+        volume: "bom", category: "events", difficulty: "easy",
+        question: "What did Captain Moroni write on his torn coat to rally the Nephites?",
+        answers: ["'In memory of our God, our religion, and freedom, and our peace, our wives, and our children'", "'Victory or death'", "'The Lord is our strength'", "'Remember the covenant'"],
+        correct: 0,
+        explanation: "Captain Moroni tore his coat and wrote upon it a message about God, religion, freedom, peace, wives, and children — creating the Title of Liberty to inspire the Nephites to defend their families and faith (Alma 46:12)."
+    },
+    {
+        volume: "bom", category: "people", difficulty: "hard",
+        question: "Who were the Three Nephites?",
+        answers: ["Three of Christ's Nephite disciples who were granted to remain on earth until Christ's Second Coming", "Three Nephite kings", "Three prophets who translated the plates", "Three warriors from the final battle"],
+        correct: 0,
+        explanation: "Three of Christ's twelve Nephite disciples desired to tarry on the earth until Christ comes again. They were transfigured and given power over death (3 Nephi 28)."
+    },
+    {
+        volume: "bom", category: "scripture", difficulty: "medium",
+        question: "What does Mosiah 3:19 say about the 'natural man'?",
+        answers: ["The natural man is an enemy to God and must yield to the Holy Spirit", "The natural man is good and needs no change", "The natural man is neither good nor evil", "The natural man will naturally find God"],
+        correct: 0,
+        explanation: "'The natural man is an enemy to God, and has been from the fall of Adam, and will be, forever and ever, unless he yields to the enticings of the Holy Spirit' (Mosiah 3:19)."
+    },
+    {
+        volume: "bom", category: "events", difficulty: "hard",
+        question: "What secret combination eventually led to the downfall of both the Nephite and Jaredite civilizations?",
+        answers: ["The Gadianton robbers (and similar secret oaths/combinations)", "The order of Nehor", "The king-men conspiracy", "The Amalekite alliance"],
+        correct: 0,
+        explanation: "Secret combinations, particularly the Gadianton robbers, played a major role in the destruction of the Nephite civilization. Similar secret combinations destroyed the Jaredites before them. Mormon and Moroni warned future readers about this pattern."
+    },
+    {
+        volume: "bom", category: "people", difficulty: "easy",
+        question: "Who was Nephi's faithful mother?",
+        answers: ["Sariah", "Abish", "Isabel", "Mary"],
+        correct: 0,
+        explanation: "Sariah was Nephi's mother and Lehi's wife. Despite initial doubts about her sons' safety when they returned for the brass plates, she was faithful throughout their journey."
+    },
+    {
+        volume: "bom", category: "places", difficulty: "medium",
+        question: "Where did the people of Alma settle after fleeing King Noah?",
+        answers: ["The land of Helam", "The land of Zarahemla", "The land of Nephi", "The city of Moroni"],
+        correct: 0,
+        explanation: "After fleeing King Noah, Alma and his people settled in the land of Helam. They were eventually discovered by a Lamanite army and placed under bondage before the Lord delivered them (Mosiah 23-24)."
+    },
+    {
+        volume: "bom", category: "scripture", difficulty: "hard",
+        question: "In Jacob 5, what does the allegory of the olive tree represent?",
+        answers: ["The history of God's covenant people (Israel) and their scattering and gathering", "The growth of the Church", "The plan of salvation", "The life of Christ"],
+        correct: 0,
+        explanation: "The allegory of the tame and wild olive trees in Jacob 5 (originally from the prophet Zenos) represents the scattering and gathering of Israel throughout history, with the Lord of the vineyard working to preserve his people."
+    },
+    {
+        volume: "bom", category: "events", difficulty: "medium",
+        question: "What did King Benjamin's people do after hearing his great speech?",
+        answers: ["They fell to the earth and cried for mercy, then entered a covenant", "They immediately went to war", "They chose a new king", "They began building a temple"],
+        correct: 0,
+        explanation: "The people were overcome by the Spirit, fell to the earth, and cried out for mercy through the atoning blood of Christ. They then entered into a covenant to keep God's commandments and received a remission of their sins (Mosiah 4-5)."
+    },
+    {
+        volume: "bom", category: "books", difficulty: "medium",
+        question: "Which book contains King Benjamin's famous farewell address?",
+        answers: ["Mosiah", "Alma", "Helaman", "2 Nephi"],
+        correct: 0,
+        explanation: "King Benjamin's farewell address is found in Mosiah chapters 2-5. He spoke from a tower to his people about service, the coming of Christ, and making covenants."
+    },
+    {
+        volume: "bom", category: "people", difficulty: "medium",
+        question: "Who was the lawyer who initially opposed Alma and Amulek but later converted?",
+        answers: ["Zeezrom", "Korihor", "Nehor", "Gadianton"],
+        correct: 0,
+        explanation: "Zeezrom was a skilled lawyer in Ammonihah who tried to trap Alma and Amulek. After being overcome with guilt, he became ill, was healed by Alma, and was converted and baptized (Alma 11-15)."
+    },
+    {
+        volume: "bom", category: "events", difficulty: "hard",
+        question: "What happened to the Nephite dissenters called king-men?",
+        answers: ["Captain Moroni compelled them to defend their country or be put to death", "They fled to the Lamanites", "They formed their own nation", "They were exiled to the land northward"],
+        correct: 0,
+        explanation: "The king-men sought to overthrow the government of judges and establish a king. Captain Moroni, authorized by the people, put down their rebellion — those who would not take up arms to defend the country were put to death (Alma 51)."
+    },
+    {
+        volume: "bom", category: "scripture", difficulty: "medium",
+        question: "What did Alma say is required for faith to grow?",
+        answers: ["'Give place for a portion of my words' — experiment on the word", "Fasting for many days", "Seeing a sign", "Having a perfect knowledge"],
+        correct: 0,
+        explanation: "Alma taught that faith begins by giving place for the word of God, experimenting upon it, and nourishing it. Even a desire to believe is enough to begin (Alma 32:27)."
+    },
+    {
+        volume: "bom", category: "people", difficulty: "hard",
+        question: "Who killed the Lamanite king Lehonti by slowly poisoning him?",
+        answers: ["Amalickiah", "Teancum", "Zerahemnah", "Ammoron"],
+        correct: 0,
+        explanation: "Amalickiah, in his quest to become king of the Lamanites, had Lehonti slowly poisoned until he died. Amalickiah then took command of Lehonti's army as part of his treacherous rise to power (Alma 47)."
+    },
+    {
+        volume: "bom", category: "events", difficulty: "medium",
+        question: "What sign did Samuel the Lamanite prophesy would accompany Christ's birth?",
+        answers: ["A day, a night, and a day with no darkness, and a new star", "Three days of darkness", "A great earthquake", "An eclipse of the sun"],
+        correct: 0,
+        explanation: "Samuel prophesied that at Christ's birth there would be a day, a night, and a day with no darkness (as if it were one continuous day), and a new star would appear (Helaman 14:3-6)."
+    },
+    {
+        volume: "bom", category: "places", difficulty: "hard",
+        question: "What narrow strip of land separated the Nephite lands from the Lamanite lands?",
+        answers: ["A narrow strip of wilderness between Zarahemla and Nephi", "The River Sidon", "A mountain range", "The sea east"],
+        correct: 0,
+        explanation: "A narrow strip of wilderness ran from the sea east to the sea west, separating the land of Zarahemla (Nephite) from the land of Nephi (Lamanite). It served as a natural boundary (Alma 22:27)."
+    },
+    {
+        volume: "bom", category: "scripture", difficulty: "hard",
+        question: "What does 2 Nephi 9 call the 'awful monster' that would trap mankind without the Atonement?",
+        answers: ["Death and hell (physical and spiritual death)", "Satan", "Ignorance", "The natural man"],
+        correct: 0,
+        explanation: "Jacob in 2 Nephi 9 describes death and hell as an 'awful monster' — without the Atonement, physical death and spiritual death would permanently separate mankind from God."
+    },
+    {
+        volume: "bom", category: "events", difficulty: "easy",
+        question: "What did Nephi build after arriving in the promised land?",
+        answers: ["A temple like Solomon's temple", "A great wall", "A fleet of ships", "A golden throne"],
+        correct: 0,
+        explanation: "Nephi built a temple after the manner of Solomon's temple, though it was not as elaborate due to limited materials. He also taught his people to work and build (2 Nephi 5:16)."
+    },
+    {
+        volume: "bom", category: "people", difficulty: "medium",
+        question: "Who was the Nephite warrior who killed Amalickiah by stabbing him in his tent?",
+        answers: ["Teancum", "Captain Moroni", "Helaman", "Lehi (son of Zoram)"],
+        correct: 0,
+        explanation: "Teancum was a skilled Nephite warrior who crept into Amalickiah's camp at night and killed him with a javelin to the heart. He later did the same to Amalickiah's brother Ammoron, but was killed in that attempt (Alma 51:34, 62:36)."
+    },
+    {
+        volume: "bom", category: "books", difficulty: "easy",
+        question: "What is the Book of Mormon's subtitle?",
+        answers: ["Another Testament of Jesus Christ", "The Record of the Nephites", "The Golden Bible", "A History of Ancient America"],
+        correct: 0,
+        explanation: "The Book of Mormon's subtitle is 'Another Testament of Jesus Christ,' emphasizing its purpose as a witness of Jesus Christ alongside the Bible."
+    },
+    {
+        volume: "bom", category: "scripture", difficulty: "easy",
+        question: "According to the Book of Mormon title page, what is one purpose of the book?",
+        answers: ["To convince Jew and Gentile that Jesus is the Christ", "To replace the Bible", "To record Nephite genealogy only", "To prove the existence of ancient America"],
+        correct: 0,
+        explanation: "The title page, written by Moroni, states the book was written to 'the convincing of the Jew and Gentile that Jesus is the Christ, the Eternal God, manifesting himself unto all nations.'"
+    },
+    {
+        volume: "bom", category: "events", difficulty: "hard",
+        question: "What unique method did the Jaredites use to cross the ocean?",
+        answers: ["Enclosed barges that could flip over and still float", "Large wooden ships", "Rafts lashed together", "Hollowed-out logs"],
+        correct: 0,
+        explanation: "The Jaredites built enclosed barges that were 'tight like unto a dish,' with a hole in the top and bottom. They could be flipped by waves and still float safely. The Lord caused a furious wind to push them across the sea (Ether 6)."
+    },
+    {
+        volume: "bom", category: "people", difficulty: "hard",
+        question: "Who was the last surviving Jaredite?",
+        answers: ["Coriantumr", "Ether", "Shiz", "The brother of Jared"],
+        correct: 0,
+        explanation: "Coriantumr was the last surviving Jaredite king. He was found by the people of Zarahemla (Mulekites) and lived among them for nine moons before dying (Omni 1:21, Ether 13:21)."
+    },
+    {
+        volume: "bom", category: "events", difficulty: "medium",
+        question: "Why did Nephi break his bow, and what happened after?",
+        answers: ["It broke while hunting; he made a new one and asked Lehi to inquire of the Lord", "He broke it in anger; Lehi made a new one", "It was stolen; he used a sling instead", "It melted in the desert heat"],
+        correct: 0,
+        explanation: "Nephi's fine steel bow broke while hunting, causing the family to nearly starve. He made a new bow from wood and an arrow from a straight stick, then humbly asked his father to inquire of the Lord where to hunt (1 Nephi 16)."
+    },
+    {
+        volume: "bom", category: "scripture", difficulty: "medium",
+        question: "What is the 'great and abominable church' in 1 Nephi?",
+        answers: ["Any organization or influence that fights against God and His saints", "A specific named religion", "The Lamanite religion", "The religion of King Noah"],
+        correct: 0,
+        explanation: "Nephi sees in vision a 'great and abominable church' which represents any organization, philosophy, or movement that fights against God, distorts truth, and persecutes the saints — it is not a specific denomination."
+    },
+    {
+        volume: "bom", category: "people", difficulty: "medium",
+        question: "How many sons did Mosiah have who went on missions to the Lamanites?",
+        answers: ["Four (Ammon, Aaron, Omner, Himni)", "Two", "Three", "Twelve"],
+        correct: 0,
+        explanation: "Mosiah had four sons — Ammon, Aaron, Omner, and Himni — who all went on missions to the Lamanites for 14 years. Their missions are recorded primarily in Alma 17-27."
+    },
+    {
+        volume: "bom", category: "events", difficulty: "hard",
+        question: "What happened to the people of King Limhi to help them escape Lamanite bondage?",
+        answers: ["They got the Lamanite guards drunk and escaped through a back pass", "An earthquake opened a path", "Angels fought the Lamanites", "They tunneled under the walls"],
+        correct: 0,
+        explanation: "The people of Limhi gave the Lamanite guards wine to drink. While the guards were drunk, Limhi's people escaped through a back pass in the wilderness with their flocks and families (Mosiah 22)."
+    },
+
+    // =============================================
+    // OLD TESTAMENT
+    // =============================================
+    { volume: "ot", category: "people", difficulty: "easy", question: "Who built the ark to survive the great flood?", answers: ["Noah", "Abraham", "Moses", "Adam"], correct: 0, explanation: "God commanded Noah to build an ark to preserve his family and animals from the flood that would destroy the wicked (Genesis 6-9)." },
+    { volume: "ot", category: "people", difficulty: "easy", question: "Who led the Israelites out of Egypt?", answers: ["Moses", "Joshua", "Abraham", "Joseph"], correct: 0, explanation: "Moses was called by God at the burning bush to deliver the children of Israel from bondage in Egypt (Exodus 3-14)." },
+    { volume: "ot", category: "people", difficulty: "easy", question: "Who was the first man created by God?", answers: ["Adam", "Noah", "Abraham", "Enoch"], correct: 0, explanation: "Adam was the first man, created by God in the Garden of Eden from the dust of the ground (Genesis 2:7)." },
+    { volume: "ot", category: "people", difficulty: "easy", question: "Who was Abraham's wife?", answers: ["Sarah", "Rebekah", "Rachel", "Leah"], correct: 0, explanation: "Sarah (originally Sarai) was Abraham's wife. God promised them a son, Isaac, even in their old age (Genesis 17-21)." },
+    { volume: "ot", category: "people", difficulty: "easy", question: "Who was sold into Egypt by his brothers?", answers: ["Joseph", "Benjamin", "Judah", "Reuben"], correct: 0, explanation: "Joseph, the son of Jacob and Rachel, was sold by his jealous brothers to merchants and eventually became a ruler in Egypt (Genesis 37, 39-41)." },
+    { volume: "ot", category: "events", difficulty: "easy", question: "What did God create on the first day according to Genesis?", answers: ["Light", "Water", "Animals", "Man"], correct: 0, explanation: "On the first day God said 'Let there be light,' dividing light from darkness, calling them day and night (Genesis 1:3-5)." },
+    { volume: "ot", category: "events", difficulty: "easy", question: "What were the Ten Commandments written on?", answers: ["Tablets of stone", "A scroll", "The wall of the temple", "Papyrus"], correct: 0, explanation: "God wrote the Ten Commandments on two tablets of stone and gave them to Moses on Mount Sinai (Exodus 31:18)." },
+    { volume: "ot", category: "events", difficulty: "easy", question: "What did Moses part to help the Israelites escape?", answers: ["The Red Sea", "The River Jordan", "The Nile", "The Dead Sea"], correct: 0, explanation: "Moses stretched out his hand and the Lord parted the Red Sea, allowing the Israelites to cross on dry ground while escaping Pharaoh's army (Exodus 14)." },
+    { volume: "ot", category: "people", difficulty: "medium", question: "Who was the boy who defeated the giant Goliath?", answers: ["David", "Saul", "Jonathan", "Solomon"], correct: 0, explanation: "David, a young shepherd, defeated the Philistine giant Goliath with a sling and a stone, trusting in the Lord (1 Samuel 17)." },
+    { volume: "ot", category: "people", difficulty: "medium", question: "Who was known as the wisest king of Israel?", answers: ["Solomon", "David", "Saul", "Hezekiah"], correct: 0, explanation: "Solomon, David's son, asked God for wisdom and became the wisest king. He built the first temple in Jerusalem (1 Kings 3-6)." },
+    { volume: "ot", category: "people", difficulty: "medium", question: "Which prophet was taken to heaven in a chariot of fire?", answers: ["Elijah", "Elisha", "Isaiah", "Enoch"], correct: 0, explanation: "Elijah was taken up to heaven by a whirlwind with a chariot of fire and horses of fire. His mantle fell to Elisha (2 Kings 2:11)." },
+    { volume: "ot", category: "events", difficulty: "medium", question: "How many plagues did God send upon Egypt?", answers: ["10", "7", "12", "5"], correct: 0, explanation: "God sent ten plagues upon Egypt, culminating in the death of the firstborn, after which Pharaoh finally let the Israelites go (Exodus 7-12)." },
+    { volume: "ot", category: "events", difficulty: "medium", question: "What did God provide as food for the Israelites in the wilderness?", answers: ["Manna", "Figs", "Wheat", "Corn"], correct: 0, explanation: "God provided manna from heaven for the Israelites to eat during their 40 years of wandering in the wilderness (Exodus 16)." },
+    { volume: "ot", category: "people", difficulty: "medium", question: "Who was swallowed by a great fish after fleeing from God's command?", answers: ["Jonah", "Elijah", "Amos", "Hosea"], correct: 0, explanation: "Jonah fled from God's command to preach to Nineveh. He was swallowed by a great fish and spent three days inside before being released (Jonah 1-2)." },
+    { volume: "ot", category: "events", difficulty: "medium", question: "What covenant sign did God give Noah after the flood?", answers: ["A rainbow", "A dove", "A burning bush", "A pillar of fire"], correct: 0, explanation: "God set a rainbow in the sky as a sign of His covenant never to destroy the earth with a flood again (Genesis 9:13)." },
+    { volume: "ot", category: "people", difficulty: "medium", question: "Who interpreted Pharaoh's dreams about seven fat and seven lean cows?", answers: ["Joseph", "Moses", "Daniel", "Aaron"], correct: 0, explanation: "Joseph interpreted Pharaoh's dreams, predicting seven years of plenty followed by seven years of famine. This led to his rise as ruler of Egypt (Genesis 41)." },
+    { volume: "ot", category: "events", difficulty: "hard", question: "What test did God give Abraham regarding his son Isaac?", answers: ["To offer Isaac as a sacrifice", "To send Isaac away", "To let Isaac choose his own wife", "To give Isaac to the temple"], correct: 0, explanation: "God tested Abraham by commanding him to offer Isaac as a sacrifice on Mount Moriah. An angel stopped him, and a ram was provided instead (Genesis 22)." },
+    { volume: "ot", category: "people", difficulty: "hard", question: "Who wrestled with an angel and was given the name Israel?", answers: ["Jacob", "Esau", "Joseph", "Abraham"], correct: 0, explanation: "Jacob wrestled with an angel through the night at Peniel and was given the name Israel, meaning 'he who prevails with God' (Genesis 32:24-30)." },
+    { volume: "ot", category: "people", difficulty: "hard", question: "Who was the first king of Israel?", answers: ["Saul", "David", "Solomon", "Samuel"], correct: 0, explanation: "Saul, of the tribe of Benjamin, was anointed by the prophet Samuel as the first king of Israel (1 Samuel 10)." },
+    { volume: "ot", category: "events", difficulty: "hard", question: "What did Daniel's three friends survive after refusing to worship a golden image?", answers: ["A fiery furnace", "A lion's den", "A pit of snakes", "Stoning"], correct: 0, explanation: "Shadrach, Meshach, and Abednego were thrown into a fiery furnace by King Nebuchadnezzar but were protected by God and emerged unharmed (Daniel 3)." },
+    { volume: "ot", category: "events", difficulty: "hard", question: "How long did the Israelites wander in the wilderness before entering the promised land?", answers: ["40 years", "20 years", "10 years", "70 years"], correct: 0, explanation: "Because of their lack of faith, the Israelites wandered for 40 years in the wilderness before Joshua led them into the promised land (Numbers 14:33-34)." },
+    { volume: "ot", category: "people", difficulty: "hard", question: "Who was the prophet that confronted King David about his sin with Bathsheba?", answers: ["Nathan", "Samuel", "Elijah", "Isaiah"], correct: 0, explanation: "The prophet Nathan confronted David by telling him a parable about a rich man who took a poor man's lamb, leading David to recognize his own sin (2 Samuel 12)." },
+    { volume: "ot", category: "scripture", difficulty: "medium", question: "What does Proverbs 3:5 say to trust in?", answers: ["The Lord with all thine heart", "Your own understanding", "The words of the wise", "The law of Moses"], correct: 0, explanation: "'Trust in the Lord with all thine heart; and lean not unto thine own understanding' (Proverbs 3:5)." },
+    { volume: "ot", category: "scripture", difficulty: "hard", question: "In Isaiah 53, who is described as being 'wounded for our transgressions'?", answers: ["The Messiah/Suffering Servant", "Moses", "David", "Isaiah himself"], correct: 0, explanation: "Isaiah 53 prophesies of the Messiah: 'He was wounded for our transgressions, he was bruised for our iniquities,' foretelling Christ's atoning sacrifice." },
+    { volume: "ot", category: "scripture", difficulty: "easy", question: "What is the first book of the Old Testament?", answers: ["Genesis", "Exodus", "Leviticus", "Deuteronomy"], correct: 0, explanation: "Genesis is the first book of the Old Testament, containing the accounts of the Creation, Adam and Eve, Noah, Abraham, Isaac, Jacob, and Joseph." },
+
+    // =============================================
+    // NEW TESTAMENT
+    // =============================================
+    { volume: "nt", category: "people", difficulty: "easy", question: "Who was the mother of Jesus?", answers: ["Mary", "Martha", "Elizabeth", "Salome"], correct: 0, explanation: "Mary, a young virgin in Nazareth, was visited by the angel Gabriel and told she would bear the Son of God (Luke 1:26-38)." },
+    { volume: "nt", category: "people", difficulty: "easy", question: "Who baptized Jesus in the River Jordan?", answers: ["John the Baptist", "Peter", "Andrew", "John the Apostle"], correct: 0, explanation: "John the Baptist baptized Jesus in the River Jordan, after which the Holy Spirit descended like a dove and God's voice declared Jesus as His Son (Matthew 3:13-17)." },
+    { volume: "nt", category: "people", difficulty: "easy", question: "How many apostles did Jesus call?", answers: ["12", "7", "10", "14"], correct: 0, explanation: "Jesus called twelve apostles: Peter, Andrew, James, John, Philip, Bartholomew, Matthew, Thomas, James (son of Alphaeus), Thaddaeus, Simon, and Judas Iscariot (Matthew 10:1-4)." },
+    { volume: "nt", category: "events", difficulty: "easy", question: "Where was Jesus born?", answers: ["Bethlehem", "Nazareth", "Jerusalem", "Capernaum"], correct: 0, explanation: "Jesus was born in Bethlehem of Judea, in a manger because there was no room in the inn (Luke 2:4-7)." },
+    { volume: "nt", category: "events", difficulty: "easy", question: "How did Jesus die?", answers: ["He was crucified on a cross", "He was stoned", "He died of old age", "He was drowned"], correct: 0, explanation: "Jesus was crucified on a cross at Golgotha (Calvary) under Pontius Pilate's authority, dying for the sins of all mankind (Matthew 27, Luke 23, John 19)." },
+    { volume: "nt", category: "events", difficulty: "easy", question: "What happened on the third day after Jesus died?", answers: ["He was resurrected", "His disciples gathered", "An earthquake destroyed the temple", "Angels appeared to the Romans"], correct: 0, explanation: "On the third day, Jesus rose from the dead, appearing first to Mary Magdalene at the empty tomb (Matthew 28, John 20)." },
+    { volume: "nt", category: "events", difficulty: "easy", question: "What miracle did Jesus perform at a wedding?", answers: ["Turned water into wine", "Healed a blind man", "Fed thousands", "Walked on water"], correct: 0, explanation: "At the wedding in Cana, Jesus turned water into wine — His first recorded miracle (John 2:1-11)." },
+    { volume: "nt", category: "people", difficulty: "medium", question: "Which apostle denied Jesus three times?", answers: ["Peter", "Thomas", "Judas", "James"], correct: 0, explanation: "Peter denied knowing Jesus three times before the rooster crowed, just as Jesus had prophesied (Matthew 26:69-75)." },
+    { volume: "nt", category: "people", difficulty: "medium", question: "Which apostle betrayed Jesus for thirty pieces of silver?", answers: ["Judas Iscariot", "Peter", "Thomas", "Matthew"], correct: 0, explanation: "Judas Iscariot betrayed Jesus to the chief priests for thirty pieces of silver and identified Him with a kiss in the Garden of Gethsemane (Matthew 26:14-16, 47-50)." },
+    { volume: "nt", category: "people", difficulty: "medium", question: "Who was known as the 'doubting' apostle?", answers: ["Thomas", "Peter", "Philip", "Andrew"], correct: 0, explanation: "Thomas initially doubted the resurrection until Jesus appeared and invited him to touch His wounds, after which Thomas declared 'My Lord and my God' (John 20:24-29)." },
+    { volume: "nt", category: "events", difficulty: "medium", question: "How many people did Jesus feed with five loaves and two fishes?", answers: ["About 5,000 men, plus women and children", "About 1,000", "About 500", "About 10,000"], correct: 0, explanation: "Jesus miraculously fed about 5,000 men (not counting women and children) with five loaves of bread and two fishes (Matthew 14:13-21)." },
+    { volume: "nt", category: "events", difficulty: "medium", question: "What happened to Jesus on the Mount of Transfiguration?", answers: ["His face shone like the sun and Moses and Elijah appeared", "He received the Ten Commandments", "He was tempted by Satan", "He ascended to heaven"], correct: 0, explanation: "On the Mount of Transfiguration, Jesus' appearance became glorified, Moses and Elijah appeared, and God's voice declared Jesus as His beloved Son (Matthew 17:1-8)." },
+    { volume: "nt", category: "events", difficulty: "medium", question: "What parable teaches about a son who leaves home, wastes his inheritance, and returns?", answers: ["The Prodigal Son", "The Good Samaritan", "The Sower", "The Lost Sheep"], correct: 0, explanation: "The Parable of the Prodigal Son teaches about God's mercy and forgiveness. The father welcomed his wayward son back with open arms (Luke 15:11-32)." },
+    { volume: "nt", category: "scripture", difficulty: "medium", question: "According to John 3:16, what did God give because He loved the world?", answers: ["His only begotten Son", "The law", "The Holy Spirit", "The Ten Commandments"], correct: 0, explanation: "'For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life' (John 3:16)." },
+    { volume: "nt", category: "events", difficulty: "medium", question: "Where did Jesus pray the night before His crucifixion?", answers: ["The Garden of Gethsemane", "The temple", "The Mount of Olives summit", "The upper room"], correct: 0, explanation: "Jesus prayed in the Garden of Gethsemane, where He suffered greatly, sweating 'as it were great drops of blood' (Luke 22:39-44)." },
+    { volume: "nt", category: "people", difficulty: "hard", question: "Who was the Pharisee who came to Jesus by night to learn from Him?", answers: ["Nicodemus", "Joseph of Arimathea", "Gamaliel", "Caiaphas"], correct: 0, explanation: "Nicodemus came to Jesus by night. Jesus taught him about being 'born again' of water and the Spirit (John 3:1-21)." },
+    { volume: "nt", category: "people", difficulty: "hard", question: "What was Paul's name before his conversion?", answers: ["Saul", "Silas", "Barnabas", "Timothy"], correct: 0, explanation: "Paul was originally named Saul of Tarsus. He persecuted Christians until the risen Christ appeared to him on the road to Damascus (Acts 9)." },
+    { volume: "nt", category: "events", difficulty: "hard", question: "What happened on the day of Pentecost?", answers: ["The Holy Spirit descended on the apostles and they spoke in tongues", "Jesus was resurrected", "The temple was destroyed", "Jesus ascended to heaven"], correct: 0, explanation: "On Pentecost, the Holy Spirit descended on the apostles like tongues of fire. They spoke in tongues and about 3,000 were baptized that day (Acts 2)." },
+    { volume: "nt", category: "scripture", difficulty: "easy", question: "What are the two greatest commandments according to Jesus?", answers: ["Love God and love thy neighbor", "Keep the Sabbath and honor thy parents", "Do not kill and do not steal", "Pray always and read the scriptures"], correct: 0, explanation: "Jesus said the two greatest commandments are to love God with all your heart, and to love your neighbor as yourself (Matthew 22:36-40)." },
+    { volume: "nt", category: "scripture", difficulty: "hard", question: "In 1 Corinthians 13, what does Paul say is the greatest of faith, hope, and charity?", answers: ["Charity (love)", "Faith", "Hope", "They are all equal"], correct: 0, explanation: "'And now abideth faith, hope, charity, these three; but the greatest of these is charity' (1 Corinthians 13:13)." },
+    { volume: "nt", category: "events", difficulty: "hard", question: "What did Jesus do at the Last Supper that taught the apostles about service?", answers: ["He washed their feet", "He broke bread", "He sang hymns", "He read from the scriptures"], correct: 0, explanation: "Jesus washed the feet of His apostles at the Last Supper, teaching them that the greatest among them must be the servant of all (John 13:1-17)." },
+    { volume: "nt", category: "scripture", difficulty: "medium", question: "What does James 1:5 say to do if you lack wisdom?", answers: ["Ask of God, who giveth liberally", "Study the scriptures diligently", "Seek counsel from the elders", "Fast and pray for three days"], correct: 0, explanation: "'If any of you lack wisdom, let him ask of God, that giveth to all men liberally, and upbraideth not; and it shall be given him' (James 1:5). This verse inspired Joseph Smith to pray." },
+    { volume: "nt", category: "people", difficulty: "medium", question: "Who was the first Christian martyr?", answers: ["Stephen", "James", "Peter", "Paul"], correct: 0, explanation: "Stephen was the first Christian martyr. He was stoned to death after testifying of Jesus Christ before the Sanhedrin (Acts 7:54-60)." },
+
+    // =============================================
+    // DOCTRINE & COVENANTS
+    // =============================================
+    { volume: "dc", category: "events", difficulty: "easy", question: "What event prompted Joseph Smith to pray in the Sacred Grove?", answers: ["Reading James 1:5 about asking God for wisdom", "A dream about gold plates", "A visit from his bishop", "Reading the Book of Mormon"], correct: 0, explanation: "As a young boy, Joseph Smith read James 1:5 and was inspired to pray to know which church to join. This led to the First Vision in the Sacred Grove (JS—History 1:11-12)." },
+    { volume: "dc", category: "events", difficulty: "easy", question: "What did Joseph Smith see in the First Vision?", answers: ["God the Father and Jesus Christ", "An angel with gold plates", "A pillar of fire", "Moses and Elijah"], correct: 0, explanation: "Joseph Smith saw two Personages — God the Father and Jesus Christ — who told him not to join any existing church (JS—History 1:17)." },
+    { volume: "dc", category: "people", difficulty: "easy", question: "Who was Joseph Smith's scribe for most of the Book of Mormon translation?", answers: ["Oliver Cowdery", "Martin Harris", "Sidney Rigdon", "Emma Smith"], correct: 0, explanation: "Oliver Cowdery served as the primary scribe during the translation of the Book of Mormon and also received the Aaronic and Melchizedek Priesthoods alongside Joseph Smith." },
+    { volume: "dc", category: "events", difficulty: "easy", question: "What priesthood was restored by John the Baptist?", answers: ["The Aaronic Priesthood", "The Melchizedek Priesthood", "The Levitical Priesthood only", "The High Priesthood"], correct: 0, explanation: "John the Baptist appeared to Joseph Smith and Oliver Cowdery on May 15, 1829, and conferred the Aaronic Priesthood upon them (D&C 13)." },
+    { volume: "dc", category: "scripture", difficulty: "easy", question: "D&C 4:3 says 'If ye have desires to serve God ye are ___.'", answers: ["Called to the work", "Already saved", "Worthy of baptism", "Made prophets"], correct: 0, explanation: "'If ye have desires to serve God ye are called to the work' (D&C 4:3). This section was given to Joseph Smith's father." },
+    { volume: "dc", category: "events", difficulty: "medium", question: "Who restored the Melchizedek Priesthood?", answers: ["Peter, James, and John", "Moses and Elijah", "John the Baptist", "Moroni"], correct: 0, explanation: "The ancient apostles Peter, James, and John appeared to Joseph Smith and Oliver Cowdery in 1829 and conferred the Melchizedek Priesthood (D&C 27:12-13)." },
+    { volume: "dc", category: "scripture", difficulty: "medium", question: "What does D&C 82:10 say about the Lord keeping His promises?", answers: ["'I, the Lord, am bound when ye do what I say'", "'My promises are eternal and unchanging'", "'The blessings come after the trial of faith'", "'Ask and ye shall receive'"], correct: 0, explanation: "'I, the Lord, am bound when ye do what I say; but when ye do not what I say, ye have no promise' (D&C 82:10)." },
+    { volume: "dc", category: "scripture", difficulty: "medium", question: "What does D&C 88:118 counsel us to seek learning by?", answers: ["Study and also by faith", "Prayer and fasting", "The Spirit alone", "Teachers and priests"], correct: 0, explanation: "'Seek ye out of the best books words of wisdom; seek learning, even by study and also by faith' (D&C 88:118)." },
+    { volume: "dc", category: "events", difficulty: "medium", question: "What is D&C 89 commonly known as?", answers: ["The Word of Wisdom", "The Law of Consecration", "The Articles of Faith", "The Law of Tithing"], correct: 0, explanation: "D&C 89 is known as the Word of Wisdom, a health code given as revelation that counsels against harmful substances and promotes wholesome living." },
+    { volume: "dc", category: "scripture", difficulty: "medium", question: "What does D&C 130:20-21 teach about blessings?", answers: ["Every blessing is predicated upon obedience to a law", "Blessings come by grace alone", "All blessings are gifts not earned", "Only the righteous receive blessings"], correct: 0, explanation: "'There is a law, irrevocably decreed in heaven before the foundations of this world, upon which all blessings are predicated — And when we obtain any blessing from God, it is by obedience to that law' (D&C 130:20-21)." },
+    { volume: "dc", category: "events", difficulty: "hard", question: "What three kingdoms of glory are described in D&C 76?", answers: ["Celestial, Terrestrial, and Telestial", "Heaven, Paradise, and Spirit Prison", "Gold, Silver, and Bronze", "Exaltation, Salvation, and Damnation"], correct: 0, explanation: "D&C 76, known as 'The Vision,' describes three degrees of glory: the Celestial (compared to the sun), Terrestrial (the moon), and Telestial (the stars)." },
+    { volume: "dc", category: "scripture", difficulty: "hard", question: "What does D&C 121:36 say about priesthood power?", answers: ["It can only be exercised in righteousness", "It is given to all worthy men", "It comes through ordination alone", "It is passed from father to son"], correct: 0, explanation: "'The rights of the priesthood are inseparably connected with the powers of heaven, and the powers of heaven cannot be controlled nor handled only upon the principles of righteousness' (D&C 121:36)." },
+    { volume: "dc", category: "scripture", difficulty: "hard", question: "What does D&C 93:36 teach about intelligence?", answers: ["'The glory of God is intelligence, or in other words, light and truth'", "'Intelligence is the beginning of wisdom'", "'Seek intelligence above all things'", "'Intelligence comes from the scriptures'"], correct: 0, explanation: "'The glory of God is intelligence, or, in other words, light and truth' (D&C 93:36)." },
+    { volume: "dc", category: "events", difficulty: "hard", question: "What happened at the Kirtland Temple dedication in 1836?", answers: ["Moses, Elias, and Elijah appeared and restored priesthood keys", "The temple caught fire", "Joseph Smith received the gold plates", "Brigham Young was called as prophet"], correct: 0, explanation: "After the Kirtland Temple dedication, Moses, Elias, and Elijah appeared and committed their priesthood keys to Joseph Smith and Oliver Cowdery (D&C 110)." },
+    { volume: "dc", category: "people", difficulty: "medium", question: "To whom was D&C 25 addressed, calling her an 'elect lady'?", answers: ["Emma Smith", "Lucy Mack Smith", "Mary Fielding Smith", "Eliza R. Snow"], correct: 0, explanation: "D&C 25 was a revelation given to Emma Smith, Joseph's wife, calling her an 'elect lady' and instructing her to compile a hymnbook for the Church." },
+
+    // =============================================
+    // PEARL OF GREAT PRICE
+    // =============================================
+    { volume: "pgp", category: "events", difficulty: "easy", question: "In the Book of Moses, what did God say was His work and glory?", answers: ["'To bring to pass the immortality and eternal life of man'", "'To create worlds without end'", "'To judge the wicked and the righteous'", "'To teach men the law'"], correct: 0, explanation: "'For behold, this is my work and my glory — to bring to pass the immortality and eternal life of man' (Moses 1:39)." },
+    { volume: "pgp", category: "people", difficulty: "easy", question: "In the Book of Abraham, what did Abraham see in a vision?", answers: ["The stars and the pre-mortal organization of spirits", "The destruction of Sodom", "The parting of the Red Sea", "The building of the pyramids"], correct: 0, explanation: "Abraham was shown the stars and learned about the pre-mortal existence, the council in heaven, and the organization of intelligences (Abraham 3)." },
+    { volume: "pgp", category: "events", difficulty: "easy", question: "What does the Book of Moses teach about Enoch's city?", answers: ["It was taken up to heaven because of the people's righteousness", "It was destroyed by a flood", "It became the city of Jerusalem", "It was conquered by enemies"], correct: 0, explanation: "Enoch built the city of Zion, whose people were so righteous that 'the Lord came and dwelt with his people' and the city was taken up into heaven (Moses 7:18-21)." },
+    { volume: "pgp", category: "scripture", difficulty: "medium", question: "According to Abraham 3:22-23, what did God say about Abraham before he was born?", answers: ["'Thou art one of them; thou wast chosen before thou wast born'", "'Thou shalt be the father of many nations'", "'Thou shalt lead my people out of bondage'", "'Thou art a chosen vessel'"], correct: 0, explanation: "God showed Abraham the pre-mortal spirits and said, 'Abraham, thou art one of them; thou wast chosen before thou wast born' (Abraham 3:23)." },
+    { volume: "pgp", category: "events", difficulty: "medium", question: "According to the Articles of Faith, what is the first principle of the gospel?", answers: ["Faith in the Lord Jesus Christ", "Repentance", "Baptism", "The gift of the Holy Ghost"], correct: 0, explanation: "The fourth Article of Faith states: 'We believe that the first principles and ordinances of the Gospel are: first, Faith in the Lord Jesus Christ; second, Repentance; third, Baptism...' (A of F 1:4)." },
+    { volume: "pgp", category: "scripture", difficulty: "medium", question: "How many Articles of Faith are there?", answers: ["13", "10", "12", "15"], correct: 0, explanation: "There are 13 Articles of Faith, written by Joseph Smith as a summary of the basic beliefs of The Church of Jesus Christ of Latter-day Saints." },
+    { volume: "pgp", category: "events", difficulty: "medium", question: "In Moses 7, why did God weep?", answers: ["Because of the wickedness and suffering of His children", "Because of the flood", "Because Moses doubted", "Because of Satan's rebellion"], correct: 0, explanation: "Enoch saw God weep because of the wickedness of His children and the misery that would come upon them. This revealed God's deep love and compassion for all mankind (Moses 7:28-37)." },
+    { volume: "pgp", category: "events", difficulty: "hard", question: "According to Joseph Smith—History, what did Moroni tell Joseph about the gold plates?", answers: ["They contained the fulness of the everlasting gospel and were buried in a nearby hill", "They were hidden in a cave near Jerusalem", "They would appear in a dream", "They were kept by three witnesses"], correct: 0, explanation: "Moroni told Joseph that a book written on gold plates was deposited in a hill nearby, containing the fulness of the everlasting gospel as delivered by the Savior (JS—History 1:34)." },
+    { volume: "pgp", category: "scripture", difficulty: "hard", question: "What does the 13th Article of Faith say Latter-day Saints believe in?", answers: ["Being honest, true, chaste, benevolent, and doing good to all men", "The literal gathering of Israel", "The gift of tongues and prophecy", "God the Eternal Father, His Son, and the Holy Ghost"], correct: 0, explanation: "'We believe in being honest, true, chaste, benevolent, virtuous, and in doing good to all men... If there is anything virtuous, lovely, or of good report or praiseworthy, we seek after these things' (A of F 1:13)." },
+    { volume: "pgp", category: "people", difficulty: "hard", question: "In the Book of Moses, who did Satan claim to be when he appeared to Moses?", answers: ["'The Only Begotten'", "'The God of this world'", "'An angel of light'", "'The Most High'"], correct: 0, explanation: "After Moses saw God, Satan appeared and commanded Moses to worship him, saying 'I am the Only Begotten, worship me.' Moses perceived the deception and commanded Satan to depart (Moses 1:19-22)." },
+    { volume: "pgp", category: "scripture", difficulty: "easy", question: "What does the first Article of Faith declare?", answers: ["'We believe in God, the Eternal Father, and in His Son, Jesus Christ, and in the Holy Ghost'", "'We believe the Bible to be the word of God'", "'We believe in being honest and true'", "'We believe in the same organization that existed in the Primitive Church'"], correct: 0, explanation: "The first Article of Faith states the foundational belief in the Godhead: 'We believe in God, the Eternal Father, and in His Son, Jesus Christ, and in the Holy Ghost' (A of F 1:1)." }
+];
+
+// ============ FILL IN THE BLANKS SCRIPTURE DATA ============
+const SCRIPTURES = [
+    // --- EASY ---
+    {
+        volume: "bom", reference: "1 Nephi 3:7",
+        difficulty: "easy",
+        text: "I will {go} and {do} the things which the {Lord} hath {commanded}, for I know that the Lord giveth no commandments unto the children of men, save he shall {prepare} a way for them that they may accomplish the thing which he commandeth them.",
+        decoys: ["said", "promised", "people"]
+    },
+    {
+        volume: "bom", reference: "2 Nephi 2:25",
+        difficulty: "easy",
+        text: "Adam {fell} that men might {be}; and men {are}, that they might have {joy}.",
+        decoys: ["rose", "live", "peace", "were"]
+    },
+    {
+        volume: "bom", reference: "Mosiah 2:17",
+        difficulty: "easy",
+        text: "When ye are in the {service} of your fellow {beings} ye are only in the {service} of your {God}.",
+        decoys: ["presence", "people", "kingdom"]
+    },
+    {
+        volume: "bom", reference: "Moroni 10:4",
+        difficulty: "easy",
+        text: "And when ye shall {receive} these things, I would exhort you that ye would {ask} {God}, the Eternal Father, in the name of {Christ}, if these things are not {true}.",
+        decoys: ["read", "pray", "know", "Lord"]
+    },
+    {
+        volume: "bom", reference: "2 Nephi 28:30",
+        difficulty: "easy",
+        text: "For behold, thus saith the Lord God: I will give unto the children of men {line} upon {line}, {precept} upon {precept}, here a {little} and there a little.",
+        decoys: ["word", "truth", "much"]
+    },
+    {
+        volume: "bom", reference: "Mosiah 4:30",
+        difficulty: "easy",
+        text: "But this much I can tell you, that if ye do not {watch} yourselves, and your {thoughts}, and your {words}, and your {deeds}, and observe the commandments of God... ye must {perish}.",
+        decoys: ["guard", "hearts", "works", "fall"]
+    },
+    {
+        volume: "bom", reference: "Alma 37:35",
+        difficulty: "easy",
+        text: "O, {remember}, my son, and learn {wisdom} in thy {youth}; yea, learn in thy youth to keep the {commandments} of God.",
+        decoys: ["behold", "knowledge", "strength"]
+    },
+    {
+        volume: "bom", reference: "Moroni 10:5",
+        difficulty: "easy",
+        text: "And by the {power} of the {Holy} {Ghost} ye may {know} the truth of {all} things.",
+        decoys: ["spirit", "see", "many", "strength"]
+    },
+    {
+        volume: "bom", reference: "3 Nephi 11:29",
+        difficulty: "easy",
+        text: "For verily, verily, I say unto you, he that hath the spirit of {contention} is not of {me}, but is of the {devil}, who is the father of contention.",
+        decoys: ["anger", "God", "world"]
+    },
+    {
+        volume: "bom", reference: "2 Nephi 9:28",
+        difficulty: "easy",
+        text: "O that cunning {plan} of the {evil} one! O the vainness, and the {frailties}, and the {foolishness} of men!",
+        decoys: ["work", "wicked", "weakness"]
+    },
+    // --- MEDIUM ---
+    {
+        volume: "bom", reference: "Alma 32:21",
+        difficulty: "medium",
+        text: "And now as I said concerning {faith} — faith is not to have a {perfect} {knowledge} of things; therefore if ye have faith ye {hope} for things which are {not} {seen}, which are true.",
+        decoys: ["belief", "complete", "wisdom", "pray", "never", "heard"]
+    },
+    {
+        volume: "bom", reference: "Mosiah 3:19",
+        difficulty: "medium",
+        text: "For the {natural} man is an {enemy} to God, and has been from the {fall} of Adam, and will be, {forever} and ever, unless he {yields} to the enticings of the {Holy} Spirit.",
+        decoys: ["mortal", "stranger", "time", "always", "submits", "Sacred"]
+    },
+    {
+        volume: "bom", reference: "Alma 41:10",
+        difficulty: "medium",
+        text: "Do not suppose, because it has been spoken concerning {restoration}, that ye shall be {restored} from sin to {happiness}. Behold, I say unto you, {wickedness} never was {happiness}.",
+        decoys: ["redemption", "returned", "joy", "evil", "peace"]
+    },
+    {
+        volume: "bom", reference: "Ether 12:27",
+        difficulty: "medium",
+        text: "And if men come unto {me} I will show unto them their {weakness}. I give unto men weakness that they may be {humble}; and my {grace} is sufficient for all men that {humble} themselves before me.",
+        decoys: ["God", "sin", "faithful", "mercy", "bow"]
+    },
+    {
+        volume: "bom", reference: "2 Nephi 2:27",
+        difficulty: "medium",
+        text: "Wherefore, men are {free} according to the {flesh}; and all things are {given} them which are {expedient} unto man. And they are free to {choose} liberty and eternal {life}, through the great Mediator of all men.",
+        decoys: ["bound", "spirit", "offered", "needful", "seek", "light"]
+    },
+    {
+        volume: "bom", reference: "Alma 37:6",
+        difficulty: "medium",
+        text: "Now ye may suppose that this is {foolishness} in me; but behold I say unto you, that by {small} and {simple} things are {great} things brought to {pass}.",
+        decoys: ["weakness", "humble", "quiet", "mighty", "light"]
+    },
+    {
+        volume: "bom", reference: "Helaman 5:12",
+        difficulty: "medium",
+        text: "And now, my sons, {remember}, remember that it is upon the {rock} of our {Redeemer}, who is {Christ}, the Son of God, that ye must build your {foundation}.",
+        decoys: ["behold", "stone", "Savior", "Jesus", "faith"]
+    },
+    {
+        volume: "bom", reference: "Moroni 7:45",
+        difficulty: "medium",
+        text: "And {charity} suffereth long, and is {kind}, and {envieth} not, and is not {puffed} up, seeketh not her {own}.",
+        decoys: ["faith", "meek", "lusteth", "lifted", "way"]
+    },
+    {
+        volume: "bom", reference: "2 Nephi 31:20",
+        difficulty: "medium",
+        text: "Wherefore, ye must press {forward} with a {steadfastness} in Christ, having a perfect {brightness} of {hope}, and a love of God and of {all} men.",
+        decoys: ["onward", "faithfulness", "fulness", "faith", "every"]
+    },
+    {
+        volume: "bom", reference: "Alma 34:32",
+        difficulty: "medium",
+        text: "For behold, this {life} is the time for men to {prepare} to meet {God}; yea, behold the {day} of this life is the day for men to perform their {labors}.",
+        decoys: ["world", "learn", "Christ", "time", "works"]
+    },
+    // --- HARD ---
+    {
+        volume: "bom", reference: "2 Nephi 2:11",
+        difficulty: "hard",
+        text: "For it must needs be, that there is an {opposition} in {all} things. If not so, my firstborn in the {wilderness}, {righteousness} could not be brought to pass, neither {wickedness}, neither {holiness} nor {misery}, neither good nor bad.",
+        decoys: ["balance", "many", "world", "goodness", "evil", "godliness", "sorrow"]
+    },
+    {
+        volume: "bom", reference: "Alma 7:11-12",
+        difficulty: "hard",
+        text: "And he shall go forth, {suffering} pains and {afflictions} and {temptations} of every kind; and this that the word might be fulfilled which saith he will {take} upon him the {pains} and the sicknesses of his {people}.",
+        decoys: ["enduring", "sorrows", "trials", "bear", "sins", "children"]
+    },
+    {
+        volume: "bom", reference: "Mosiah 18:9",
+        difficulty: "hard",
+        text: "Yea, and are {willing} to {mourn} with those that mourn; yea, and {comfort} those that stand in need of {comfort}, and to stand as {witnesses} of God at all times and in all things.",
+        decoys: ["ready", "weep", "bless", "peace", "servants"]
+    },
+    {
+        volume: "bom", reference: "Alma 42:25",
+        difficulty: "hard",
+        text: "What, do ye suppose that {mercy} can rob {justice}? I say unto you, Nay; not one whit. If so, {God} would cease to be {God}.",
+        decoys: ["grace", "law", "Christ", "righteous"]
+    },
+    {
+        volume: "bom", reference: "3 Nephi 27:27",
+        difficulty: "hard",
+        text: "And know ye that ye shall be {judges} of this people, according to the {judgment} which I shall give unto you, which shall be {just}. Therefore, what manner of {men} ought ye to be? Verily I say unto you, even as {I} {am}.",
+        decoys: ["leaders", "law", "right", "people", "we", "were"]
+    },
+    {
+        volume: "bom", reference: "Mormon 9:31",
+        difficulty: "hard",
+        text: "Condemn me not because of mine {imperfection}, neither my {father}, because of his imperfection, neither them who have {written} before him; but rather give {thanks} unto God that he hath made {manifest} unto you our imperfections.",
+        decoys: ["weakness", "brother", "spoken", "praise", "known"]
+    },
+    {
+        volume: "bom", reference: "Ether 12:6",
+        difficulty: "hard",
+        text: "And now, I, Moroni, would speak somewhat concerning these things; I would show unto the {world} that {faith} is things which are {hoped} for and {not} {seen}; wherefore, {dispute} not because ye see not, for ye receive no {witness} until after the {trial} of your faith.",
+        decoys: ["people", "hope", "prayed", "never", "known", "question", "proof", "test"]
+    },
+    {
+        volume: "bom", reference: "2 Nephi 32:3",
+        difficulty: "hard",
+        text: "Angels speak by the power of the {Holy} {Ghost}; wherefore, they speak the {words} of Christ. Wherefore, I said unto you, {feast} upon the words of {Christ}; for behold, the words of Christ will {tell} you all things what ye should {do}.",
+        decoys: ["Sacred", "Spirit", "teachings", "ponder", "God", "show", "say"]
+    },
+    {
+        volume: "bom", reference: "Moroni 7:47",
+        difficulty: "hard",
+        text: "But {charity} is the pure {love} of {Christ}, and it endureth {forever}; and whoso is found {possessed} of it at the last {day}, it shall be {well} with him.",
+        decoys: ["faith", "grace", "God", "always", "filled", "time", "good"]
+    },
+    {
+        volume: "bom", reference: "Jacob 2:17",
+        difficulty: "hard",
+        text: "Think of your {brethren} like unto {yourselves}, and be {familiar} with all and {free} with your {substance}, that they may be {rich} like unto you.",
+        decoys: ["brothers", "themselves", "friendly", "generous", "wealth", "blessed"]
+    },
+    {
+        volume: "bom", reference: "Alma 36:3",
+        difficulty: "medium",
+        text: "And now, O my son Helaman, behold, thou art in thy {youth}, and therefore, I beseech of thee that thou wilt hear my {words} and {learn} of me; for I do {know} that whosoever shall put their {trust} in God shall be {supported} in their trials.",
+        decoys: ["age", "teachings", "listen", "believe", "faith", "strengthened"]
+    },
+    {
+        volume: "bom", reference: "1 Nephi 11:25",
+        difficulty: "medium",
+        text: "And it came to pass that I beheld that the {rod} of {iron}, which my father had seen, was the {word} of {God}, which led to the {fountain} of living {waters}, or to the {tree} of life.",
+        decoys: ["staff", "brass", "law", "Christ", "river", "springs", "fruit"]
+    },
+    {
+        volume: "bom", reference: "Mosiah 2:41",
+        difficulty: "medium",
+        text: "And moreover, I would desire that ye should consider on the {blessed} and {happy} state of those that keep the {commandments} of God. For behold, they are {blessed} in all things, both {temporal} and {spiritual}.",
+        decoys: ["holy", "joyful", "statutes", "favored", "worldly", "eternal"]
+    },
+
+    // =============================================
+    // OLD TESTAMENT SCRIPTURES
+    // =============================================
+    { volume: "ot", reference: "Genesis 1:1", difficulty: "easy", text: "In the {beginning} God {created} the {heaven} and the {earth}.", decoys: ["first", "made", "sky", "world"] },
+    { volume: "ot", reference: "Proverbs 3:5-6", difficulty: "easy", text: "Trust in the {Lord} with all thine {heart}; and lean not unto thine own {understanding}. In all thy ways {acknowledge} him, and he shall {direct} thy paths.", decoys: ["God", "soul", "wisdom", "follow", "guide"] },
+    { volume: "ot", reference: "Isaiah 1:18", difficulty: "medium", text: "Come now, and let us {reason} together, saith the Lord: though your {sins} be as {scarlet}, they shall be as {white} as snow; though they be {red} like crimson, they shall be as {wool}.", decoys: ["speak", "guilt", "crimson", "pure", "dark", "linen"] },
+    { volume: "ot", reference: "Psalm 23:1-3", difficulty: "easy", text: "The {Lord} is my {shepherd}; I shall not {want}. He maketh me to lie down in green {pastures}: he leadeth me beside the {still} waters. He {restoreth} my soul.", decoys: ["God", "guide", "lack", "fields", "calm", "healeth"] },
+    { volume: "ot", reference: "Isaiah 53:5", difficulty: "hard", text: "But he was {wounded} for our {transgressions}, he was {bruised} for our {iniquities}: the chastisement of our {peace} was upon him; and with his {stripes} we are {healed}.", decoys: ["pierced", "sins", "broken", "guilt", "salvation", "wounds", "saved"] },
+    { volume: "ot", reference: "Jeremiah 1:5", difficulty: "medium", text: "Before I {formed} thee in the {belly} I {knew} thee; and before thou camest forth out of the {womb} I {sanctified} thee, and I {ordained} thee a prophet unto the nations.", decoys: ["created", "womb", "called", "body", "blessed", "chose"] },
+    { volume: "ot", reference: "Ecclesiastes 3:1", difficulty: "easy", text: "To every thing there is a {season}, and a {time} to every {purpose} under the {heaven}.", decoys: ["reason", "day", "plan", "sun"] },
+    { volume: "ot", reference: "Micah 6:8", difficulty: "hard", text: "He hath shewed thee, O man, what is {good}; and what doth the Lord {require} of thee, but to do {justly}, and to love {mercy}, and to walk {humbly} with thy God?", decoys: ["right", "ask", "rightly", "grace", "meekly"] },
+
+    // =============================================
+    // NEW TESTAMENT SCRIPTURES
+    // =============================================
+    { volume: "nt", reference: "John 3:16", difficulty: "easy", text: "For God so {loved} the {world}, that he gave his only {begotten} Son, that whosoever {believeth} in him should not {perish}, but have everlasting {life}.", decoys: ["blessed", "people", "chosen", "trusteth", "suffer", "light"] },
+    { volume: "nt", reference: "Matthew 5:14-16", difficulty: "medium", text: "Ye are the {light} of the {world}. A city that is set on an {hill} cannot be {hid}. Let your {light} so {shine} before men, that they may see your good {works}.", decoys: ["salt", "earth", "mountain", "moved", "love", "glow", "deeds"] },
+    { volume: "nt", reference: "John 14:6", difficulty: "easy", text: "Jesus saith unto him, I am the {way}, the {truth}, and the {life}: no man cometh unto the {Father}, but by {me}.", decoys: ["path", "light", "hope", "God", "him"] },
+    { volume: "nt", reference: "Philippians 4:13", difficulty: "easy", text: "I can do all {things} through {Christ} which {strengtheneth} {me}.", decoys: ["works", "God", "blesseth", "us"] },
+    { volume: "nt", reference: "Romans 8:28", difficulty: "medium", text: "And we know that {all} things work together for {good} to them that {love} God, to them who are the {called} according to his {purpose}.", decoys: ["many", "righteousness", "serve", "chosen", "plan"] },
+    { volume: "nt", reference: "1 Corinthians 13:4-5", difficulty: "medium", text: "Charity {suffereth} long, and is {kind}; charity {envieth} not; charity {vaunteth} not itself, is not {puffed} up, doth not behave itself {unseemly}.", decoys: ["endureth", "meek", "lusteth", "boasteth", "lifted", "rudely"] },
+    { volume: "nt", reference: "Hebrews 11:1", difficulty: "hard", text: "Now {faith} is the {substance} of things {hoped} for, the {evidence} of things not {seen}.", decoys: ["hope", "assurance", "prayed", "proof", "known"] },
+    { volume: "nt", reference: "James 1:5", difficulty: "medium", text: "If any of you lack {wisdom}, let him {ask} of {God}, that giveth to all men {liberally}, and {upbraideth} not; and it shall be {given} him.", decoys: ["knowledge", "pray", "Christ", "freely", "judgeth", "shown"] },
+    { volume: "nt", reference: "Matthew 6:33", difficulty: "medium", text: "But seek ye {first} the {kingdom} of God, and his {righteousness}; and all these {things} shall be {added} unto you.", decoys: ["always", "glory", "holiness", "blessings", "given"] },
+
+    // =============================================
+    // D&C SCRIPTURES
+    // =============================================
+    { volume: "dc", reference: "D&C 4:2", difficulty: "easy", text: "Therefore, O ye that embark in the {service} of God, see that ye {serve} him with all your {heart}, {might}, {mind} and {strength}, that ye may stand {blameless} before God at the last day.", decoys: ["work", "love", "soul", "power", "body", "spirit", "guiltless"] },
+    { volume: "dc", reference: "D&C 82:10", difficulty: "medium", text: "I, the {Lord}, am {bound} when ye do what I {say}; but when ye do {not} what I say, ye have no {promise}.", decoys: ["God", "pleased", "command", "never", "blessing"] },
+    { volume: "dc", reference: "D&C 88:118", difficulty: "medium", text: "And as all have not {faith}, seek ye diligently and {teach} one {another} words of {wisdom}; yea, seek ye out of the {best} {books} words of wisdom; seek {learning}, even by study and also by {faith}.", decoys: ["knowledge", "instruct", "together", "knowledge", "good", "scriptures", "truth", "hope"] },
+    { volume: "dc", reference: "D&C 121:36", difficulty: "hard", text: "That the {rights} of the {priesthood} are inseparably {connected} with the {powers} of heaven, and that the powers of heaven cannot be {controlled} nor handled only upon the {principles} of {righteousness}.", decoys: ["keys", "authority", "joined", "blessings", "exercised", "laws", "holiness"] },
+    { volume: "dc", reference: "D&C 93:36", difficulty: "easy", text: "The {glory} of God is {intelligence}, or, in other words, {light} and {truth}.", decoys: ["power", "knowledge", "love", "grace"] },
+    { volume: "dc", reference: "D&C 130:20-21", difficulty: "hard", text: "There is a {law}, irrevocably {decreed} in {heaven} before the {foundations} of this world, upon which all {blessings} are {predicated} — and when we obtain any {blessing} from God, it is by {obedience} to that law.", decoys: ["rule", "established", "eternity", "creation", "gifts", "based", "grace", "faith"] },
+    { volume: "dc", reference: "D&C 58:27", difficulty: "medium", text: "Verily I say, men should be {anxiously} {engaged} in a good {cause}, and do many things of their own {free} {will}, and bring to pass much {righteousness}.", decoys: ["actively", "involved", "work", "own", "choice", "goodness"] },
+
+    // =============================================
+    // PEARL OF GREAT PRICE SCRIPTURES
+    // =============================================
+    { volume: "pgp", reference: "Moses 1:39", difficulty: "easy", text: "For behold, this is my {work} and my {glory} — to bring to {pass} the {immortality} and {eternal} {life} of man.", decoys: ["purpose", "power", "fulfil", "salvation", "everlasting", "light"] },
+    { volume: "pgp", reference: "Abraham 3:22-23", difficulty: "medium", text: "Now the Lord had shown unto me, Abraham, the {intelligences} that were {organized} before the {world} was; and among all these there were many of the {noble} and great {ones}.", decoys: ["spirits", "created", "earth", "chosen", "souls"] },
+    { volume: "pgp", reference: "Articles of Faith 1:13", difficulty: "hard", text: "We believe in being {honest}, {true}, {chaste}, {benevolent}, virtuous, and in doing {good} to all men... if there is anything {virtuous}, {lovely}, or of good report or {praiseworthy}, we seek after these things.", decoys: ["faithful", "kind", "pure", "generous", "right", "noble", "beautiful", "excellent"] },
+    { volume: "pgp", reference: "Moses 7:18", difficulty: "medium", text: "And the Lord called his people {Zion}, because they were of one {heart} and one {mind}, and dwelt in {righteousness}; and there was no {poor} among them.", decoys: ["Israel", "soul", "spirit", "holiness", "wicked"] },
+    { volume: "pgp", reference: "Articles of Faith 1:4", difficulty: "easy", text: "We believe that the first {principles} and {ordinances} of the Gospel are: first, {Faith} in the Lord Jesus Christ; second, {Repentance}; third, {Baptism} by immersion for the remission of sins; fourth, Laying on of {hands} for the gift of the Holy Ghost.", decoys: ["truths", "commandments", "Hope", "Confession", "Prayer", "words"] },
+];
+
+// ======== GAME STATE ========
+let state = {
+    category: "all",
+    difficulty: "all",
+    questionCount: 20,
+    questions: [],
+    currentIndex: 0,
+    score: 0,
+    streak: 0,
+    bestStreak: 0,
+    answered: false,
+    correct: 0,
+    wrong: 0
+};
+
+// ======== PILL SELECTION ========
+document.querySelectorAll('.pill-group').forEach(group => {
+    group.addEventListener('click', e => {
+        const pill = e.target.closest('.pill');
+        if (!pill) return;
+        group.querySelectorAll('.pill').forEach(p => p.classList.remove('selected'));
+        pill.classList.add('selected');
+    });
+});
+
+// ======== AUTO-DETECT BOOKS ========
+const VOLUME_BOOK_ORDER = {
+    bom: ["1 Nephi","2 Nephi","Jacob","Enos","Jarom","Omni","Words of Mormon","Mosiah","Alma","Helaman","3 Nephi","4 Nephi","Mormon","Ether","Moroni"],
+    ot: ["Genesis","Exodus","Leviticus","Numbers","Deuteronomy","Joshua","Judges","Ruth","1 Samuel","2 Samuel","1 Kings","2 Kings","1 Chronicles","2 Chronicles","Job","Psalms","Proverbs","Ecclesiastes","Isaiah","Jeremiah","Ezekiel","Daniel","Hosea","Joel","Amos","Obadiah","Jonah","Micah","Nahum","Habakkuk","Zephaniah","Haggai","Zechariah","Malachi"],
+    nt: ["Matthew","Mark","Luke","John","Acts","Romans","1 Corinthians","2 Corinthians","Galatians","Ephesians","Philippians","Colossians","1 Thessalonians","2 Thessalonians","1 Timothy","2 Timothy","Titus","Philemon","Hebrews","James","1 Peter","2 Peter","1 John","2 John","3 John","Jude","Revelation"],
+    dc: ["D&C"],
+    pgp: ["Moses","Abraham","JS—History","Articles of Faith"]
+};
+
+function bookFromRef(ref) {
+    const m = ref.match(/^(.+?)\s+\d/);
+    let book = m ? m[1].trim() : ref;
+    if (book === "Psalm") book = "Psalms";
+    if (book === "JS-History" || book === "JS—History") book = "JS—History";
+    return book;
+}
+
+function detectBook(item) {
+    if (item.reference) return bookFromRef(item.reference);
+    const allBooks = VOLUME_BOOK_ORDER[item.volume] || [];
+    const sorted = [...allBooks].sort((a, b) => b.length - a.length);
+    const text = (item.explanation || '') + ' ' + (item.question || '');
+    for (const book of sorted) {
+        if (text.includes(book)) return book;
+    }
+    const paren = text.match(/\((\d?\s?[A-Z][a-zA-Z—]+(?:\s[A-Za-z]+)*)\s+\d/);
+    if (paren) {
+        let found = paren[1].trim();
+        if (found === "Psalm") found = "Psalms";
+        return found;
+    }
+    return "General";
+}
+
+QUESTIONS.forEach(q => { q.book = detectBook(q); });
+SCRIPTURES.forEach(s => { s.book = detectBook(s); });
+
+function updateBookFilter() {
+    const group = document.getElementById('bookFilterGroup');
+    const pillsEl = document.getElementById('bookPills');
+
+    if (currentVolume === 'all') {
+        group.classList.add('hidden');
+        return;
+    }
+
+    const books = new Set();
+    QUESTIONS.filter(q => q.volume === currentVolume).forEach(q => books.add(q.book));
+    SCRIPTURES.filter(s => s.volume === currentVolume).forEach(s => books.add(s.book));
+
+    if (books.size <= 1) {
+        group.classList.add('hidden');
+        return;
+    }
+
+    const order = VOLUME_BOOK_ORDER[currentVolume] || [];
+    const sorted = [...books].sort((a, b) => {
+        const ai = order.indexOf(a);
+        const bi = order.indexOf(b);
+        if (ai === -1 && bi === -1) return a.localeCompare(b);
+        if (ai === -1) return 1;
+        if (bi === -1) return -1;
+        return ai - bi;
+    });
+
+    pillsEl.innerHTML = '<div class="pill selected" data-value="all">All Books</div>' +
+        sorted.map(b => `<div class="pill" data-value="${b}">${b}</div>`).join('');
+
+    group.classList.remove('hidden');
+}
+
+// ======== UTILITY ========
+function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
+function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+
+function getSelected(groupId) {
+    const pill = document.querySelector(`#${groupId} .pill.selected`);
+    return pill ? pill.dataset.value : null;
+}
+
+// ======== START GAME ========
+function startGame() {
+    state.category = getSelected('categoryPills');
+    state.difficulty = getSelected('difficultyPills');
+    const countVal = getSelected('countPills');
+
+    const selectedBook = getSelected('bookPills') || 'all';
+    let pool = [...QUESTIONS];
+    if (currentVolume !== 'all') pool = pool.filter(q => q.volume === currentVolume);
+    if (selectedBook !== 'all') pool = pool.filter(q => q.book === selectedBook);
+    if (state.category !== 'all') pool = pool.filter(q => q.category === state.category);
+    if (state.difficulty !== 'all') pool = pool.filter(q => q.difficulty === state.difficulty);
+
+    pool = shuffle(pool);
+
+    state.questionCount = countVal === 'all' ? pool.length : Math.min(parseInt(countVal), pool.length);
+    state.questions = pool.slice(0, state.questionCount);
+    state.currentIndex = 0;
+    state.score = 0;
+    state.streak = 0;
+    state.bestStreak = 0;
+    state.correct = 0;
+    state.wrong = 0;
+
+    if (state.questions.length === 0) {
+        alert('No questions match your filters. Try different settings.');
+        return;
+    }
+
+    showScreen('gameScreen');
+    renderQuestion();
+}
+
+// ======== RENDER QUESTION ========
+function renderQuestion() {
+    const q = state.questions[state.currentIndex];
+    state.answered = false;
+
+    document.getElementById('hudQuestion').textContent = `${state.currentIndex + 1}/${state.questions.length}`;
+    document.getElementById('hudScore').textContent = state.score;
+    document.getElementById('hudStreak').textContent = `${state.streak} 🔥`;
+    document.getElementById('progressFill').style.width = `${((state.currentIndex) / state.questions.length) * 100}%`;
+    document.getElementById('streakIndicator').textContent = state.streak >= 3 ? `🔥 ${state.streak} in a row!` : '';
+    document.getElementById('nextBtnArea').style.display = 'none';
+
+    const letters = ['A', 'B', 'C', 'D'];
+
+    const shuffledIndices = shuffle([0, 1, 2, 3]);
+    const correctMapped = shuffledIndices.indexOf(q.correct);
+
+    const card = document.getElementById('questionCard');
+    const volLabels = { bom: "Book of Mormon", ot: "Old Testament", nt: "New Testament", dc: "D&C", pgp: "Pearl of Great Price" };
+    card.innerHTML = `
+        <span class="category-badge">${volLabels[q.volume] || q.category}</span>
+        <span class="category-badge" style="background:var(--accent)">${q.category}</span>
+        <span class="difficulty-badge ${q.difficulty}">${q.difficulty}</span>
+        <p class="question-text">${q.question}</p>
+        <div class="answers">
+            ${shuffledIndices.map((origIdx, displayIdx) => `
+                <button class="answer-btn" data-index="${displayIdx}" data-correct="${displayIdx === correctMapped}" onclick="selectAnswer(this, ${displayIdx}, ${correctMapped})">
+                    <span class="option-letter">${letters[displayIdx]}</span>
+                    ${q.answers[origIdx]}
+                </button>
+            `).join('')}
+        </div>
+    `;
+}
+
+// ======== SELECT ANSWER ========
+function selectAnswer(btn, selected, correctIdx) {
+    if (state.answered) return;
+    state.answered = true;
+
+    const q = state.questions[state.currentIndex];
+    const buttons = document.querySelectorAll('.answer-btn');
+
+    buttons.forEach(b => {
+        b.classList.add('disabled');
+        const idx = parseInt(b.dataset.index);
+        if (idx === correctIdx) b.classList.add('correct');
+        if (idx === selected && selected !== correctIdx) b.classList.add('incorrect');
+    });
+
+    if (selected === correctIdx) {
+        state.correct++;
+        state.streak++;
+        if (state.streak > state.bestStreak) state.bestStreak = state.streak;
+        const streakBonus = Math.min(state.streak - 1, 4);
+        const diffMultiplier = q.difficulty === 'hard' ? 3 : q.difficulty === 'medium' ? 2 : 1;
+        state.score += (10 + streakBonus * 2) * diffMultiplier;
+    } else {
+        state.wrong++;
+        state.streak = 0;
+    }
+
+    document.getElementById('hudScore').textContent = state.score;
+    document.getElementById('hudStreak').textContent = `${state.streak} 🔥`;
+    document.getElementById('streakIndicator').textContent = state.streak >= 3 ? `🔥 ${state.streak} in a row!` : (selected !== correctIdx && state.streak === 0 ? 'Streak lost!' : '');
+
+    const explanationDiv = document.createElement('div');
+    explanationDiv.className = 'explanation';
+    explanationDiv.innerHTML = `<strong>📖 Explanation:</strong> ${q.explanation}`;
+    document.getElementById('questionCard').appendChild(explanationDiv);
+
+    document.getElementById('nextBtnArea').style.display = 'flex';
+}
+
+// ======== NEXT QUESTION ========
+function nextQuestion() {
+    state.currentIndex++;
+    if (state.currentIndex >= state.questions.length) {
+        showResults();
+    } else {
+        renderQuestion();
+    }
+}
+
+// ======== RESULTS ========
+function showResults() {
+    const pct = Math.round((state.correct / state.questions.length) * 100);
+    document.getElementById('finalPercent').textContent = `${pct}%`;
+    document.getElementById('statCorrect').textContent = state.correct;
+    document.getElementById('statWrong').textContent = state.wrong;
+    document.getElementById('statStreak').textContent = state.bestStreak;
+
+    let msg, sub;
+    const volNames = { all: "the scriptures", bom: "the Book of Mormon", ot: "the Old Testament", nt: "the New Testament", dc: "the Doctrine & Covenants", pgp: "the Pearl of Great Price" };
+    const vn = volNames[currentVolume] || "the scriptures";
+    if (pct === 100) { msg = "Perfect Score!"; sub = `You truly know ${vn}!`; }
+    else if (pct >= 80) { msg = "Excellent!"; sub = "You have outstanding knowledge of the scriptures."; }
+    else if (pct >= 60) { msg = "Great Job!"; sub = `You know ${vn} well.`; }
+    else if (pct >= 40) { msg = "Good Effort!"; sub = "Keep studying and you'll improve!"; }
+    else { msg = "Keep Learning!"; sub = "The scriptures have so much to discover."; }
+
+    document.getElementById('resultsMessage').textContent = msg;
+    document.getElementById('resultsSub').textContent = sub;
+
+    const xpEarned = state.score;
+    const isPerfect = pct === 100;
+    awardXP(xpEarned, state.correct, state.questions.length, state.bestStreak, isPerfect);
+    document.getElementById('xpGainAmount').textContent = `+${xpEarned} XP`;
+    document.getElementById('xpGainLabel').textContent = isPerfect ? 'Perfect game bonus!' : `Level ${getLevelInfo(loadProgress().xp).current.level}`;
+
+    document.getElementById('progressFill').style.width = '100%';
+    showScreen('resultsScreen');
+}
+
+// ======== VOLUME & GAME MODE SELECTION ========
+let currentMode = 'trivia';
+let currentVolume = 'all';
+
+function selectVolume(el) {
+    document.querySelectorAll('.volume-chip').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    currentVolume = el.dataset.value;
+    updateBookFilter();
+}
+
+function selectMode(mode) {
+    currentMode = mode;
+    document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('selected'));
+    document.querySelector(`.mode-card[data-mode="${mode}"]`).classList.add('selected');
+    document.getElementById('triviaSettings').classList.toggle('hidden', mode !== 'trivia');
+    document.getElementById('fitbSettings').classList.toggle('hidden', mode !== 'fitb');
+}
+
+function startCurrentMode() {
+    if (currentMode === 'trivia') {
+        startGame();
+    } else {
+        startFitb();
+    }
+}
+
+// ======== FILL IN THE BLANKS STATE ========
+let fitbState = {
+    verses: [],
+    currentIndex: 0,
+    score: 0,
+    perfectCount: 0,
+    totalBlanks: 0,
+    totalCorrect: 0,
+    selectedBlank: null,
+    currentBlanks: [],
+    currentWords: [],
+    checked: false
+};
+
+function parseFitbVerse(scripture) {
+    const parts = [];
+    const blanks = [];
+    let text = scripture.text;
+    let idx = 0;
+    const regex = /\{([^}]+)\}/g;
+    let match;
+    let blankId = 0;
+
+    while ((match = regex.exec(text)) !== null) {
+        if (match.index > idx) {
+            parts.push({ type: 'text', content: text.slice(idx, match.index) });
+        }
+        parts.push({ type: 'blank', id: blankId, answer: match[1] });
+        blanks.push({ id: blankId, answer: match[1], filled: null });
+        blankId++;
+        idx = match.index + match[0].length;
+    }
+    if (idx < text.length) {
+        parts.push({ type: 'text', content: text.slice(idx) });
+    }
+
+    const correctWords = blanks.map(b => b.answer);
+    const allWords = shuffle([...correctWords, ...scripture.decoys]);
+
+    return { parts, blanks, allWords, reference: scripture.reference, difficulty: scripture.difficulty };
+}
+
+function startFitb() {
+    const diff = getSelected('fitbDifficultyPills');
+    const countVal = getSelected('fitbCountPills');
+
+    const selectedBook = getSelected('bookPills') || 'all';
+    let pool = [...SCRIPTURES];
+    if (currentVolume !== 'all') pool = pool.filter(s => s.volume === currentVolume);
+    if (selectedBook !== 'all') pool = pool.filter(s => s.book === selectedBook);
+    if (diff !== 'all') pool = pool.filter(s => s.difficulty === diff);
+    pool = shuffle(pool);
+
+    const count = countVal === 'all' ? pool.length : Math.min(parseInt(countVal), pool.length);
+    if (count === 0) {
+        alert('No verses match your filters. Try different settings.');
+        return;
+    }
+
+    fitbState = {
+        verses: pool.slice(0, count),
+        currentIndex: 0,
+        score: 0,
+        perfectCount: 0,
+        totalBlanks: 0,
+        totalCorrect: 0,
+        selectedBlank: null,
+        currentBlanks: [],
+        currentWords: [],
+        checked: false
+    };
+
+    showScreen('fitbScreen');
+    renderFitbVerse();
+}
+
+function renderFitbVerse() {
+    const scripture = fitbState.verses[fitbState.currentIndex];
+    const parsed = parseFitbVerse(scripture);
+    fitbState.currentBlanks = parsed.blanks;
+    fitbState.currentWords = parsed.allWords.map((w, i) => ({ word: w, id: i, used: false }));
+    fitbState.selectedBlank = null;
+    fitbState.checked = false;
+
+    document.getElementById('fitbHudQuestion').textContent = `${fitbState.currentIndex + 1}/${fitbState.verses.length}`;
+    document.getElementById('fitbHudScore').textContent = fitbState.score;
+    document.getElementById('fitbHudPerfect').textContent = fitbState.perfectCount;
+    document.getElementById('fitbProgressFill').style.width = `${(fitbState.currentIndex / fitbState.verses.length) * 100}%`;
+    document.getElementById('fitbNextBtnArea').style.display = 'none';
+
+    const card = document.getElementById('fitbCard');
+    let verseHtml = '';
+    parsed.parts.forEach(part => {
+        if (part.type === 'text') {
+            verseHtml += part.content;
+        } else {
+            verseHtml += `<span class="blank-slot" data-blank-id="${part.id}" onclick="selectBlank(${part.id})">&nbsp;</span>`;
+        }
+    });
+
+    const fitbVolLabels = { bom: "Book of Mormon", ot: "Old Testament", nt: "New Testament", dc: "D&C", pgp: "Pearl of Great Price" };
+    const fitbVolume = fitbState.verses[fitbState.currentIndex].volume;
+    card.innerHTML = `
+        <span class="category-badge">${fitbVolLabels[fitbVolume] || "Scripture"}</span>
+        <span class="category-badge" style="background:var(--accent)">Fill in the Blanks</span>
+        <span class="difficulty-badge ${parsed.difficulty}">${parsed.difficulty}</span>
+        <div class="verse-reference">${parsed.reference}</div>
+        <div class="verse-text">${verseHtml}</div>
+        <div class="word-pile-label">Word Pile — tap a blank, then tap a word</div>
+        <div class="word-pile" id="wordPile">
+            ${fitbState.currentWords.map(w => `
+                <span class="word-chip" data-word-id="${w.id}" onclick="selectWord(${w.id})">${w.word}</span>
+            `).join('')}
+        </div>
+        <div class="fitb-actions" id="fitbActions">
+            <button class="btn btn-sm btn-secondary" onclick="clearAllBlanks()">Clear All</button>
+            <button class="btn btn-sm" id="checkBtn" onclick="checkFitbAnswers()" disabled>Check Answers</button>
+        </div>
+    `;
+}
+
+function selectBlank(blankId) {
+    if (fitbState.checked) return;
+
+    const blank = fitbState.currentBlanks.find(b => b.id === blankId);
+
+    if (blank.filled !== null) {
+        const wordObj = fitbState.currentWords.find(w => w.id === blank.filled);
+        if (wordObj) wordObj.used = false;
+        blank.filled = null;
+        updateFitbDisplay();
+        fitbState.selectedBlank = blankId;
+        highlightSelectedBlank();
+        return;
+    }
+
+    fitbState.selectedBlank = blankId;
+    highlightSelectedBlank();
+}
+
+function selectWord(wordId) {
+    if (fitbState.checked) return;
+
+    const wordObj = fitbState.currentWords[wordId];
+    if (wordObj.used) return;
+
+    let targetBlank = fitbState.selectedBlank;
+    if (targetBlank === null) {
+        targetBlank = fitbState.currentBlanks.findIndex(b => b.filled === null);
+        if (targetBlank === -1) return;
+        targetBlank = fitbState.currentBlanks[targetBlank].id;
+    }
+
+    const blank = fitbState.currentBlanks.find(b => b.id === targetBlank);
+    if (!blank || blank.filled !== null) {
+        const nextEmpty = fitbState.currentBlanks.find(b => b.filled === null);
+        if (!nextEmpty) return;
+        blank.filled = null;
+        nextEmpty.filled = wordId;
+        wordObj.used = true;
+    } else {
+        blank.filled = wordId;
+        wordObj.used = true;
+    }
+
+    const nextEmpty = fitbState.currentBlanks.find(b => b.filled === null);
+    fitbState.selectedBlank = nextEmpty ? nextEmpty.id : null;
+
+    updateFitbDisplay();
+    highlightSelectedBlank();
+}
+
+function highlightSelectedBlank() {
+    document.querySelectorAll('.blank-slot').forEach(el => el.classList.remove('selected'));
+    if (fitbState.selectedBlank !== null) {
+        const el = document.querySelector(`.blank-slot[data-blank-id="${fitbState.selectedBlank}"]`);
+        if (el) el.classList.add('selected');
+    }
+}
+
+function updateFitbDisplay() {
+    fitbState.currentBlanks.forEach(blank => {
+        const el = document.querySelector(`.blank-slot[data-blank-id="${blank.id}"]`);
+        if (!el) return;
+        if (blank.filled !== null) {
+            el.textContent = fitbState.currentWords[blank.filled].word;
+            el.classList.add('filled');
+        } else {
+            el.innerHTML = '&nbsp;';
+            el.classList.remove('filled');
+        }
+    });
+
+    fitbState.currentWords.forEach(w => {
+        const el = document.querySelector(`.word-chip[data-word-id="${w.id}"]`);
+        if (el) el.classList.toggle('used', w.used);
+    });
+
+    const allFilled = fitbState.currentBlanks.every(b => b.filled !== null);
+    const checkBtn = document.getElementById('checkBtn');
+    if (checkBtn) checkBtn.disabled = !allFilled;
+}
+
+function clearAllBlanks() {
+    if (fitbState.checked) return;
+    fitbState.currentBlanks.forEach(b => b.filled = null);
+    fitbState.currentWords.forEach(w => w.used = false);
+    fitbState.selectedBlank = fitbState.currentBlanks.length > 0 ? fitbState.currentBlanks[0].id : null;
+    updateFitbDisplay();
+    highlightSelectedBlank();
+}
+
+function checkFitbAnswers() {
+    fitbState.checked = true;
+    let correctCount = 0;
+
+    fitbState.currentBlanks.forEach(blank => {
+        const el = document.querySelector(`.blank-slot[data-blank-id="${blank.id}"]`);
+        if (!el) return;
+        const filledWord = blank.filled !== null ? fitbState.currentWords[blank.filled].word : '';
+        const isCorrect = filledWord.toLowerCase() === blank.answer.toLowerCase();
+
+        if (isCorrect) {
+            el.classList.add('correct-blank');
+            correctCount++;
+        } else {
+            el.classList.add('incorrect-blank');
+            const correction = document.createElement('span');
+            correction.className = 'correction-line';
+            correction.textContent = blank.answer;
+            el.after(correction);
+        }
+    });
+
+    const totalBlanks = fitbState.currentBlanks.length;
+    fitbState.totalBlanks += totalBlanks;
+    fitbState.totalCorrect += correctCount;
+
+    const pct = Math.round((correctCount / totalBlanks) * 100);
+    if (pct === 100) {
+        fitbState.perfectCount++;
+        fitbState.score += totalBlanks * 10;
+    } else {
+        fitbState.score += correctCount * 10;
+    }
+
+    document.getElementById('fitbHudScore').textContent = fitbState.score;
+    document.getElementById('fitbHudPerfect').textContent = fitbState.perfectCount;
+
+    let badgeClass, badgeText;
+    if (pct === 100) { badgeClass = 'perfect'; badgeText = `Perfect! ${correctCount}/${totalBlanks}`; }
+    else if (pct >= 50) { badgeClass = 'good'; badgeText = `${correctCount}/${totalBlanks} Correct`; }
+    else { badgeClass = 'needs-work'; badgeText = `${correctCount}/${totalBlanks} Correct`; }
+
+    const actions = document.getElementById('fitbActions');
+    actions.innerHTML = `<span class="verse-score-badge ${badgeClass}">${badgeText}</span>`;
+
+    document.getElementById('fitbNextBtnArea').style.display = 'flex';
+}
+
+function fitbNextVerse() {
+    fitbState.currentIndex++;
+    if (fitbState.currentIndex >= fitbState.verses.length) {
+        showFitbResults();
+    } else {
+        renderFitbVerse();
+    }
+}
+
+function showFitbResults() {
+    const pct = fitbState.totalBlanks > 0 ? Math.round((fitbState.totalCorrect / fitbState.totalBlanks) * 100) : 0;
+    document.getElementById('finalPercent').textContent = `${pct}%`;
+    document.getElementById('statCorrect').textContent = fitbState.totalCorrect;
+    document.getElementById('statWrong').textContent = fitbState.totalBlanks - fitbState.totalCorrect;
+    document.getElementById('statStreak').textContent = fitbState.perfectCount;
+    document.querySelector('#resultsScreen .stat-box:nth-child(1) .stat-label').textContent = 'Blanks Correct';
+    document.querySelector('#resultsScreen .stat-box:nth-child(2) .stat-label').textContent = 'Blanks Wrong';
+    document.querySelector('#resultsScreen .stat-box:nth-child(3) .stat-label').textContent = 'Perfect Verses';
+
+    let msg, sub;
+    if (pct === 100) { msg = "Scripture Master!"; sub = "You know these verses by heart!"; }
+    else if (pct >= 80) { msg = "Excellent!"; sub = "You really know your scriptures."; }
+    else if (pct >= 60) { msg = "Great Job!"; sub = "Your scripture knowledge is strong."; }
+    else if (pct >= 40) { msg = "Good Effort!"; sub = "Keep reading and you'll master these verses."; }
+    else { msg = "Keep Studying!"; sub = "The scriptures have so much to offer."; }
+
+    document.getElementById('resultsMessage').textContent = msg;
+    document.getElementById('resultsSub').textContent = sub;
+
+    const xpEarned = fitbState.score;
+    const isPerfect = pct === 100;
+    awardXP(xpEarned, fitbState.totalCorrect, fitbState.totalBlanks, fitbState.perfectCount, isPerfect);
+    document.getElementById('xpGainAmount').textContent = `+${xpEarned} XP`;
+    document.getElementById('xpGainLabel').textContent = isPerfect ? 'Perfect game bonus!' : `Level ${getLevelInfo(loadProgress().xp).current.level}`;
+
+    document.getElementById('fitbProgressFill').style.width = '100%';
+    showScreen('resultsScreen');
+}
+
+// ======== PROGRESS SYSTEM ========
+const LEVELS = [
+    { level: 1,  xp: 0,    rank: "Scripture Beginner" },
+    { level: 2,  xp: 100,  rank: "Scripture Student" },
+    { level: 3,  xp: 250,  rank: "Scripture Learner" },
+    { level: 4,  xp: 500,  rank: "Scripture Reader" },
+    { level: 5,  xp: 800,  rank: "Scripture Scholar" },
+    { level: 6,  xp: 1200, rank: "Scripture Disciple" },
+    { level: 7,  xp: 1800, rank: "Scripture Expert" },
+    { level: 8,  xp: 2500, rank: "Scripture Master" },
+    { level: 9,  xp: 3500, rank: "Scripture Sage" },
+    { level: 10, xp: 5000, rank: "Scripture Prophet" },
+    { level: 11, xp: 7000, rank: "Scripture Apostle" },
+    { level: 12, xp: 10000, rank: "Scripture Legend" },
+];
+
+function getDefaultProgress() {
+    return { xp: 0, gamesPlayed: 0, totalCorrect: 0, totalAnswered: 0, bestStreak: 0, perfectGames: 0 };
+}
+
+function loadProgress() {
+    try {
+        const data = localStorage.getItem('scriptureTrivia_progress');
+        if (data) return { ...getDefaultProgress(), ...JSON.parse(data) };
+    } catch(e) {}
+    return getDefaultProgress();
+}
+
+function saveProgress(prog) {
+    try { localStorage.setItem('scriptureTrivia_progress', JSON.stringify(prog)); } catch(e) {}
+}
+
+function getLevelInfo(xp) {
+    let current = LEVELS[0];
+    let next = LEVELS[1];
+    for (let i = LEVELS.length - 1; i >= 0; i--) {
+        if (xp >= LEVELS[i].xp) {
+            current = LEVELS[i];
+            next = LEVELS[i + 1] || null;
+            break;
+        }
+    }
+    return { current, next };
+}
+
+function renderProfile() {
+    const prog = loadProgress();
+    const { current, next } = getLevelInfo(prog.xp);
+
+    document.getElementById('levelBadge').textContent = current.level;
+    document.getElementById('profileRank').textContent = current.rank;
+    document.getElementById('profileXP').textContent = prog.xp.toLocaleString();
+
+    if (next) {
+        const pct = ((prog.xp - current.xp) / (next.xp - current.xp)) * 100;
+        document.getElementById('xpBarFill').style.width = `${pct}%`;
+        document.getElementById('xpCurrent').textContent = `${prog.xp - current.xp} XP`;
+        document.getElementById('xpNext').textContent = `${next.xp - current.xp} XP to Level ${next.level}`;
+    } else {
+        document.getElementById('xpBarFill').style.width = '100%';
+        document.getElementById('xpCurrent').textContent = 'MAX LEVEL';
+        document.getElementById('xpNext').textContent = '';
+    }
+
+    document.getElementById('lsGames').textContent = prog.gamesPlayed;
+    document.getElementById('lsCorrect').textContent = prog.totalCorrect;
+    document.getElementById('lsStreak').textContent = prog.bestStreak;
+    document.getElementById('lsPerfect').textContent = prog.perfectGames;
+    document.getElementById('lsAccuracy').textContent = prog.totalAnswered > 0
+        ? Math.round((prog.totalCorrect / prog.totalAnswered) * 100) + '%' : '0%';
+    document.getElementById('lsLevel').textContent = current.level;
+}
+
+function awardXP(earned, correct, answered, streak, isPerfect) {
+    const prog = loadProgress();
+    const oldLevel = getLevelInfo(prog.xp).current.level;
+
+    prog.xp += earned;
+    prog.gamesPlayed++;
+    prog.totalCorrect += correct;
+    prog.totalAnswered += answered;
+    if (streak > prog.bestStreak) prog.bestStreak = streak;
+    if (isPerfect) prog.perfectGames++;
+
+    saveProgress(prog);
+
+    const newInfo = getLevelInfo(prog.xp);
+    if (newInfo.current.level > oldLevel) {
+        setTimeout(() => showLevelUp(newInfo.current), 600);
+    }
+
+    return earned;
+}
+
+function showLevelUp(levelInfo) {
+    document.getElementById('luLevel').textContent = `Level ${levelInfo.level}`;
+    document.getElementById('luRank').textContent = levelInfo.rank;
+    document.getElementById('levelupOverlay').classList.add('show');
+    document.getElementById('levelupToast').classList.add('show');
+}
+
+function closeLevelUp() {
+    document.getElementById('levelupOverlay').classList.remove('show');
+    document.getElementById('levelupToast').classList.remove('show');
+}
+
+function toggleStats() {
+    document.getElementById('statsPanel').classList.toggle('hidden');
+}
+
+function resetProgress() {
+    if (confirm('Are you sure? This will erase all your XP, levels, and stats permanently.')) {
+        localStorage.removeItem('scriptureTrivia_progress');
+        renderProfile();
+        document.getElementById('statsPanel').classList.add('hidden');
+    }
+}
+
+renderProfile();
+
+// ======== QUIT GAME ========
+function quitGame() {
+    if (confirm('Are you sure you want to quit? Your progress will be lost.')) {
+        showScreen('startScreen');
+    }
+}
+
+// ======== REPLAY & NAVIGATION ========
+function replayCurrentMode() {
+    resetStatLabels();
+    renderProfile();
+    if (currentMode === 'trivia') startGame();
+    else startFitb();
+}
+
+function backToStart() {
+    resetStatLabels();
+    renderProfile();
+    showScreen('startScreen');
+}
+
+function resetStatLabels() {
+    document.querySelector('#resultsScreen .stat-box:nth-child(1) .stat-label').textContent = 'Correct';
+    document.querySelector('#resultsScreen .stat-box:nth-child(2) .stat-label').textContent = 'Wrong';
+    document.querySelector('#resultsScreen .stat-box:nth-child(3) .stat-label').textContent = 'Best Streak';
+}
+
+// ======== KEYBOARD SUPPORT ========
+document.addEventListener('keydown', e => {
+    if (document.getElementById('gameScreen').classList.contains('active')) {
+        if (!state.answered) {
+            const keyMap = { '1': 0, '2': 1, '3': 2, '4': 3, 'a': 0, 'b': 1, 'c': 2, 'd': 3 };
+            const idx = keyMap[e.key.toLowerCase()];
+            if (idx !== undefined) {
+                const btn = document.querySelector(`.answer-btn[data-index="${idx}"]`);
+                if (btn) {
+                    const correctIdx = parseInt(document.querySelector('.answer-btn[data-correct="true"]').dataset.index);
+                    selectAnswer(btn, idx, correctIdx);
+                }
+            }
+        } else if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            nextQuestion();
+        }
+    }
+});
+</script>
+</body>
+</html>
