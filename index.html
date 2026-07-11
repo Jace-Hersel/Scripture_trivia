@@ -871,6 +871,45 @@
             margin-bottom: 4px;
         }
 
+        .missionary-section {
+            margin-top: 4px;
+        }
+
+        .missionary-divider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 14px 0 10px;
+            color: #64748b;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .missionary-divider::before,
+        .missionary-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e2e8f0;
+        }
+
+        .missionary-section .volume-chip {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .volume-chip.missionary-chip:hover {
+            border-color: #16a34a;
+        }
+
+        .volume-chip.missionary-chip.selected {
+            background: #16a34a;
+            border-color: #16a34a;
+            color: white;
+        }
+
         .trivia-settings, .fitb-settings {
             transition: all 0.3s;
         }
@@ -964,7 +1003,10 @@
                     <div class="volume-chip" data-value="nt" onclick="selectVolume(this)"><span class="vol-icon">&#x2721;&#xFE0F;</span>New Testament</div>
                     <div class="volume-chip" data-value="dc" onclick="selectVolume(this)"><span class="vol-icon">&#x1F4D6;</span>D&amp;C</div>
                     <div class="volume-chip" data-value="pgp" onclick="selectVolume(this)"><span class="vol-icon">&#x1F48E;</span>Pearl of Great Price</div>
-                    <div class="volume-chip" data-value="pmg" onclick="selectVolume(this)"><span class="vol-icon">&#x1F4CB;</span>Preach My Gospel</div>
+                </div>
+                <div class="missionary-section">
+                    <div class="missionary-divider"><span>For Missionaries</span></div>
+                    <div class="volume-chip missionary-chip" data-value="pmg" onclick="selectVolume(this)"><span class="vol-icon">&#x1F4CB;</span>Preach My Gospel</div>
                 </div>
             </div>
 
