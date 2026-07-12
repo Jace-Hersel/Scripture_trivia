@@ -612,6 +612,13 @@
             margin-bottom: 20px;
         }
 
+        .mode-grid.single {
+            grid-template-columns: 1fr;
+            max-width: 50%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
         /* --- Progress System --- */
         .profile-card {
             background: linear-gradient(135deg, var(--primary), var(--primary-light));
@@ -2836,11 +2843,14 @@ function selectVolume(el) {
     currentVolume = el.dataset.value;
     updateBookFilter();
     const fitbCard = document.querySelector('.mode-card[data-mode="fitb"]');
+    const modeGrid = document.querySelector('.mode-grid');
     if (currentVolume === 'pmg') {
         fitbCard.classList.add('hidden');
+        modeGrid.classList.add('single');
         if (currentMode === 'fitb') selectMode('trivia');
     } else {
         fitbCard.classList.remove('hidden');
+        modeGrid.classList.remove('single');
     }
 }
 
