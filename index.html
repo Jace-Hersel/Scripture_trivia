@@ -419,6 +419,29 @@
             margin-bottom: 4px;
         }
 
+        /* --- Gold Plates Art --- */
+        .bom-art {
+            text-align: center;
+            margin-bottom: 14px;
+            padding-top: 2px;
+        }
+        .plates-svg {
+            width: 148px;
+            height: auto;
+            animation: platesGlow 4s ease-in-out infinite;
+        }
+        @keyframes platesGlow {
+            0%, 100% { filter: drop-shadow(0 3px 10px rgba(160,110,0,0.45)); }
+            50%       { filter: drop-shadow(0 6px 22px rgba(220,165,0,0.72)); }
+        }
+        @keyframes shimmerSweep {
+            0%   { transform: translateX(-70px); }
+            100% { transform: translateX(240px); }
+        }
+        .plates-shimmer {
+            animation: shimmerSweep 3.2s cubic-bezier(0.4,0,0.2,1) infinite;
+        }
+
         /* --- Fill in the Blanks --- */
         .verse-reference {
             font-size: 0.85rem;
@@ -2424,7 +2447,7 @@ const QUESTIONS = [
     { volume: "nt", category: "scripture", difficulty: "easy", question: "What does James 1:2-3 teach about trials?", answers: ["'Count it all joy when ye fall into divers temptations; the trying of your faith worketh patience'", "'God is perfectly faithful and will never permit any trial or test to come upon you that exceeds your personal strength and spiritual capacity to endure it'", "'Those who have developed genuine, deep, and abiding faith will be divinely shielded and spared from the most serious categories of trial and affliction'", "'Bring every trial and hardship to God in fervent prayer and always ask Him for direct and immediate deliverance from whatever difficulty you are currently facing'"], correct: 0, explanation: "'My brethren, count it all joy when ye fall into divers temptations; Knowing this, that the trying of your faith worketh patience' (James 1:2-3). James teaches that trials should be welcomed as opportunities to develop patience and spiritual maturity." },
 
     // Peter / John / Revelation
-    { volume: "nt", category: "scripture", difficulty: "hard", question: "What does 1 Peter 3:18-19 teach that is significant to Latter-day Saint doctrine?", answers: ["Christ was 'put to death in the flesh, but quickened by the Spirit: By which also he went and preached unto the spirits in prison' — foundational to work for the dead", "'Christ suffered for sins once and for all, and all who confess sincere belief in Him are permanently and completely forgiven without any further conditions or requirements'", "'The spirit of Christ dwelt in the ancient prophets, inspiring them to testify beforehand of His coming sufferings, death, and ultimate glorification as the risen king'", "'Christ descended physically into the place of hell to continue suffering additional atoning penalties there for three full days before His resurrection on the third morning'"], correct: 0, explanation: "Peter writes that after His crucifixion, Christ 'went and preached unto the spirits in prison.' This, with 1 Peter 4:6, is a scriptural basis for the Latter-day Saint doctrine that missionary work continues in the spirit world for those who never heard the gospel in mortality." },
+    { volume: "nt", category: "scripture", difficulty: "hard", question: "What does 1 Peter 3:18-19 teach that is significant to Latter-day Saint doctrine?", answers: ["Christ was 'put to death in the flesh, but quickened by the Spirit: By which also he went and preached unto the spirits in prison' — foundational to work for the dead", "'Christ suffered for sins once and for all, and all who confess sincere belief in Him are permanently and completely forgiven without any further conditions or requirements'", "'The spirit of Christ dwelt in the ancient prophets, inspiring them to testify beforehand of His coming sufferings, death, and ultimate glorification as the risen king'", "'Christ descended physically into the place of hell to salvage the souls for their atoning penalties before His resurrection on the third morning'"], correct: 0, explanation: "Peter writes that after His crucifixion, Christ 'went and preached unto the spirits in prison.' This, with 1 Peter 4:6, is a scriptural basis for the Latter-day Saint doctrine that missionary work continues in the spirit world for those who never heard the gospel in mortality." },
     { volume: "nt", category: "scripture", difficulty: "easy", question: "What does 1 John 4:8 declare about God's fundamental nature?", answers: ["'God is love' — love is not just what God does but what He is", "'God is light, and in him is no darkness at all'", "'God is a consuming fire'", "'God is spirit, and those who worship must worship in spirit and truth'"], correct: 0, explanation: "'He that loveth not knoweth not God; for God is love' (1 John 4:8). John teaches that love is not merely an attribute but God's very essence — foundational to understanding why He sent His Son and why we are commanded to love one another." },
     { volume: "nt", category: "scripture", difficulty: "medium", question: "What does Revelation 21 describe as the ultimate end of God's plan?", answers: ["A new heaven and new earth; the holy city New Jerusalem descends from God; 'God himself shall be with them, and be their God' — no more death or sorrow", "The final climactic battle of Armageddon in which God's armies permanently destroy Satan and all his hosts, ending evil once and for all", "A thousand-year millennial reign on the existing earth where resurrected saints rule as kings and priests over surviving mortal nations", "Every resurrected soul ascending simultaneously into the single heavenly realm while the old earth below is dissolved and ceases to exist"], correct: 0, explanation: "John saw 'a new heaven and a new earth... the holy city, new Jerusalem, coming down from God out of heaven.' God declares 'Behold, I make all things new' — no more death, sorrow, crying, or pain. 'God himself shall be with them, and be their God' (Revelation 21:1-5)." },
 
@@ -3148,6 +3171,79 @@ function renderFitbVerse() {
         <span class="category-badge">${fitbVolLabels[fitbVolume] || "Scripture"}</span>
         <span class="category-badge" style="background:var(--accent)">Fill in the Blanks</span>
         <span class="difficulty-badge ${parsed.difficulty}">${parsed.difficulty}</span>
+        <div class="bom-art">
+          <svg viewBox="0 0 160 108" class="plates-svg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <linearGradient id="pgf" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%"   stop-color="#f9dc6a"/>
+                <stop offset="45%"  stop-color="#c9930d"/>
+                <stop offset="100%" stop-color="#9a6a00"/>
+              </linearGradient>
+              <linearGradient id="pgb" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%"   stop-color="#c49010"/>
+                <stop offset="100%" stop-color="#7a5000"/>
+              </linearGradient>
+              <linearGradient id="psg" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%"   stop-color="rgba(255,248,200,0)"/>
+                <stop offset="50%"  stop-color="rgba(255,248,200,0.62)"/>
+                <stop offset="100%" stop-color="rgba(255,248,200,0)"/>
+              </linearGradient>
+              <clipPath id="plc">
+                <rect x="22" y="7" width="112" height="78" rx="4"/>
+              </clipPath>
+            </defs>
+
+            <!-- Depth plates behind main plate -->
+            <rect x="30" y="18" width="112" height="78" rx="4" fill="#5c3d00" opacity="0.22"/>
+            <rect x="26" y="13" width="112" height="78" rx="4" fill="url(#pgb)" opacity="0.7"/>
+
+            <!-- Main front plate -->
+            <rect x="22" y="7"  width="112" height="78" rx="4" fill="url(#pgf)"/>
+            <!-- Subtle top-edge highlight -->
+            <rect x="22" y="7"  width="112" height="9"  rx="4" fill="rgba(255,252,190,0.28)"/>
+            <!-- Border -->
+            <rect x="22" y="7"  width="112" height="78" rx="4" fill="none" stroke="rgba(255,220,55,0.75)" stroke-width="1.3"/>
+
+            <!-- Spine shadow strip -->
+            <rect x="22" y="7" width="16" height="78" fill="rgba(0,0,0,0.11)" rx="4 0 0 4"/>
+            <line x1="38" y1="7" x2="38" y2="85" stroke="rgba(0,0,0,0.13)" stroke-width="0.9"/>
+
+            <!-- Binding O-rings (3) -->
+            <g fill="none" stroke-linecap="round">
+              <path d="M20,19 a7,11 0 0,0 0,22" stroke="#8b6200" stroke-width="3.8"/>
+              <path d="M20,19 a7,11 0 0,0 0,22" stroke="#f0c030" stroke-width="1.6"/>
+              <path d="M20,44 a7,11 0 0,0 0,22" stroke="#8b6200" stroke-width="3.8"/>
+              <path d="M20,44 a7,11 0 0,0 0,22" stroke="#f0c030" stroke-width="1.6"/>
+              <path d="M20,68 a7,10 0 0,0 0,17" stroke="#8b6200" stroke-width="3.8"/>
+              <path d="M20,68 a7,10 0 0,0 0,17" stroke="#f0c030" stroke-width="1.6"/>
+            </g>
+
+            <!-- Engraved rows — horizontal base lines + angled tick marks (reformed Egyptian feel) -->
+            <g stroke="#7a4e00" stroke-width="0.85" opacity="0.72">
+              <!-- Row 1 -->
+              <line x1="43" y1="23" x2="121" y2="23"/>
+              <path d="M45,19 45,23 M50,19 52,23 M56,19 56,23 M61,19 59,23 M65,19 65,23 M70,19 72,23 M76,19 76,23 M81,19 79,23 M85,19 85,23 M90,19 92,23 M96,19 96,23 M101,19 99,23 M105,19 105,23 M110,19 112,23 M116,19 116,23"/>
+              <!-- Row 2 -->
+              <line x1="43" y1="33" x2="121" y2="33"/>
+              <path d="M44,29 46,33 M50,29 50,33 M55,29 53,33 M59,29 59,33 M64,29 66,33 M70,29 70,33 M75,29 73,33 M79,29 79,33 M84,29 86,33 M90,29 90,33 M95,29 93,33 M99,29 99,33 M104,29 106,33 M110,29 110,33 M115,29 113,33"/>
+              <!-- Row 3 -->
+              <line x1="43" y1="43" x2="121" y2="43"/>
+              <path d="M45,39 45,43 M50,39 52,43 M56,39 56,43 M61,39 59,43 M65,39 65,43 M70,39 72,43 M76,39 76,43 M81,39 79,43 M85,39 85,43 M90,39 92,43 M96,39 96,43 M101,39 99,43 M105,39 105,43 M110,39 112,43 M116,39 116,43"/>
+              <!-- Row 4 -->
+              <line x1="43" y1="53" x2="121" y2="53"/>
+              <path d="M44,49 46,53 M50,49 50,53 M55,49 53,53 M59,49 59,53 M64,49 66,53 M70,49 70,53 M75,49 73,53 M79,49 79,53 M84,49 86,53 M90,49 90,53 M95,49 93,53 M99,49 99,53 M104,49 106,53 M110,49 110,53 M115,49 113,53"/>
+              <!-- Row 5 -->
+              <line x1="43" y1="63" x2="121" y2="63"/>
+              <path d="M45,59 45,63 M50,59 52,63 M56,59 56,63 M61,59 59,63 M65,59 65,63 M70,59 72,63 M76,59 76,63 M81,59 79,63 M85,59 85,63 M90,59 92,63 M96,59 96,63 M101,59 99,63 M105,59 105,63"/>
+              <!-- Row 6 (shorter — plate trailing off) -->
+              <line x1="43" y1="73" x2="100" y2="73"/>
+              <path d="M45,69 45,73 M50,69 52,73 M56,69 56,73 M61,69 59,73 M65,69 65,73 M70,69 72,73 M76,69 76,73 M81,69 79,73 M85,69 85,73 M90,69 92,73 M96,69 96,73"/>
+            </g>
+
+            <!-- Gold shimmer sweep (animated) -->
+            <rect x="-70" y="7" width="70" height="78" fill="url(#psg)" clip-path="url(#plc)" class="plates-shimmer"/>
+          </svg>
+        </div>
         <div class="verse-reference">${parsed.reference}</div>
         <div class="verse-text">${verseHtml}</div>
         <div class="word-pile-label">Word Pile — tap a blank, then tap a word</div>
