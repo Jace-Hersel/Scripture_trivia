@@ -442,6 +442,24 @@
             animation: shimmerSweep 3.6s cubic-bezier(0.4,0,0.2,1) infinite;
         }
 
+        /* --- Stone Tablets Art (Old Testament) --- */
+        .tablets-svg {
+            width: 158px;
+            height: auto;
+            animation: tabletsGlow 4s ease-in-out infinite;
+        }
+        @keyframes tabletsGlow {
+            0%, 100% { filter: drop-shadow(0 4px 14px rgba(120,100,60,0.4)); }
+            50%       { filter: drop-shadow(0 7px 28px rgba(210,185,110,0.7)); }
+        }
+        @keyframes divineShimmer {
+            0%   { transform: translateX(0px); }
+            100% { transform: translateX(220px); }
+        }
+        .tablets-shimmer {
+            animation: divineShimmer 4.5s cubic-bezier(0.4,0,0.2,1) infinite;
+        }
+
         /* --- Fill in the Blanks --- */
         .verse-reference {
             font-size: 0.85rem;
@@ -2991,6 +3009,52 @@ function renderQuestion() {
             <rect x="-82" y="8" width="82" height="128" fill="url(#psg2)" clip-path="url(#plc2)" class="plates-shimmer"/>
           </svg>
         </div>` : ''}
+        ${q.volume === 'ot' ? `<div class="bom-art">
+          <svg viewBox="0 0 168 124" class="tablets-svg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <linearGradient id="otSL2" x1="0" y1="0" x2="0.7" y2="1">
+                <stop offset="0%"   stop-color="#c0b8aa"/>
+                <stop offset="55%"  stop-color="#9c9488"/>
+                <stop offset="100%" stop-color="#6e6860"/>
+              </linearGradient>
+              <linearGradient id="otSR2" x1="0.3" y1="0" x2="1" y2="1">
+                <stop offset="0%"   stop-color="#bab2a4"/>
+                <stop offset="55%"  stop-color="#989084"/>
+                <stop offset="100%" stop-color="#6c6660"/>
+              </linearGradient>
+              <linearGradient id="otSG2" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%"   stop-color="rgba(255,248,220,0)"/>
+                <stop offset="50%"  stop-color="rgba(255,248,220,0.52)"/>
+                <stop offset="100%" stop-color="rgba(255,248,220,0)"/>
+              </linearGradient>
+              <clipPath id="otSC2">
+                <path d="M12,42 a30,30 0 0,1 60,0 L72,112 L12,112 Z"/>
+                <path d="M96,42 a30,30 0 0,1 60,0 L156,112 L96,112 Z"/>
+              </clipPath>
+            </defs>
+            <path d="M16,46 a30,30 0 0,1 60,0 L76,116 L16,116 Z" fill="#2a2420" opacity="0.28"/>
+            <path d="M100,46 a30,30 0 0,1 60,0 L160,116 L100,116 Z" fill="#2a2420" opacity="0.28"/>
+            <path d="M12,42 a30,30 0 0,1 60,0 L72,112 L12,112 Z" fill="url(#otSL2)"/>
+            <path d="M12,42 a30,30 0 0,1 60,0 L72,112 L12,112 Z" fill="none" stroke="#5a5248" stroke-width="1.5"/>
+            <path d="M18,42 a24,24 0 0,1 48,0" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M96,42 a30,30 0 0,1 60,0 L156,112 L96,112 Z" fill="url(#otSR2)"/>
+            <path d="M96,42 a30,30 0 0,1 60,0 L156,112 L96,112 Z" fill="none" stroke="#5a5248" stroke-width="1.5"/>
+            <path d="M102,42 a24,24 0 0,1 48,0" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.8" stroke-linecap="round"/>
+            <g font-family="Georgia,'Times New Roman',serif" font-size="12" text-anchor="middle" font-weight="bold" fill="#3c3428">
+              <text x="42" y="57">I</text><text x="42" y="69">II</text><text x="42" y="81">III</text><text x="42" y="93">IV</text><text x="42" y="105">V</text>
+            </g>
+            <g font-family="Georgia,'Times New Roman',serif" font-size="12" text-anchor="middle" font-weight="bold" fill="rgba(215,205,190,0.65)">
+              <text x="41.3" y="56.3">I</text><text x="41.3" y="68.3">II</text><text x="41.3" y="80.3">III</text><text x="41.3" y="92.3">IV</text><text x="41.3" y="104.3">V</text>
+            </g>
+            <g font-family="Georgia,'Times New Roman',serif" font-size="12" text-anchor="middle" font-weight="bold" fill="#3c3428">
+              <text x="126" y="57">VI</text><text x="126" y="69">VII</text><text x="126" y="81">VIII</text><text x="126" y="93">IX</text><text x="126" y="105">X</text>
+            </g>
+            <g font-family="Georgia,'Times New Roman',serif" font-size="12" text-anchor="middle" font-weight="bold" fill="rgba(215,205,190,0.6)">
+              <text x="125.3" y="56.3">VI</text><text x="125.3" y="68.3">VII</text><text x="125.3" y="80.3">VIII</text><text x="125.3" y="92.3">IX</text><text x="125.3" y="104.3">X</text>
+            </g>
+            <rect x="-80" y="0" width="80" height="124" fill="url(#otSG2)" clip-path="url(#otSC2)" class="tablets-shimmer"/>
+          </svg>
+        </div>` : ''}
         <p class="question-text">${q.question}</p>
         <div class="answers">
             ${shuffledIndices.map((origIdx, displayIdx) => `
@@ -3297,6 +3361,52 @@ function renderFitbVerse() {
 
             <!-- Gold shimmer sweep (left to right) -->
             <rect x="-82" y="8" width="82" height="128" fill="url(#psg)" clip-path="url(#plc)" class="plates-shimmer"/>
+          </svg>
+        </div>` : ''}
+        ${fitbVolume === 'ot' ? `<div class="bom-art">
+          <svg viewBox="0 0 168 124" class="tablets-svg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <linearGradient id="otSL" x1="0" y1="0" x2="0.7" y2="1">
+                <stop offset="0%"   stop-color="#c0b8aa"/>
+                <stop offset="55%"  stop-color="#9c9488"/>
+                <stop offset="100%" stop-color="#6e6860"/>
+              </linearGradient>
+              <linearGradient id="otSR" x1="0.3" y1="0" x2="1" y2="1">
+                <stop offset="0%"   stop-color="#bab2a4"/>
+                <stop offset="55%"  stop-color="#989084"/>
+                <stop offset="100%" stop-color="#6c6660"/>
+              </linearGradient>
+              <linearGradient id="otSG" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%"   stop-color="rgba(255,248,220,0)"/>
+                <stop offset="50%"  stop-color="rgba(255,248,220,0.52)"/>
+                <stop offset="100%" stop-color="rgba(255,248,220,0)"/>
+              </linearGradient>
+              <clipPath id="otSC">
+                <path d="M12,42 a30,30 0 0,1 60,0 L72,112 L12,112 Z"/>
+                <path d="M96,42 a30,30 0 0,1 60,0 L156,112 L96,112 Z"/>
+              </clipPath>
+            </defs>
+            <path d="M16,46 a30,30 0 0,1 60,0 L76,116 L16,116 Z" fill="#2a2420" opacity="0.28"/>
+            <path d="M100,46 a30,30 0 0,1 60,0 L160,116 L100,116 Z" fill="#2a2420" opacity="0.28"/>
+            <path d="M12,42 a30,30 0 0,1 60,0 L72,112 L12,112 Z" fill="url(#otSL)"/>
+            <path d="M12,42 a30,30 0 0,1 60,0 L72,112 L12,112 Z" fill="none" stroke="#5a5248" stroke-width="1.5"/>
+            <path d="M18,42 a24,24 0 0,1 48,0" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M96,42 a30,30 0 0,1 60,0 L156,112 L96,112 Z" fill="url(#otSR)"/>
+            <path d="M96,42 a30,30 0 0,1 60,0 L156,112 L96,112 Z" fill="none" stroke="#5a5248" stroke-width="1.5"/>
+            <path d="M102,42 a24,24 0 0,1 48,0" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.8" stroke-linecap="round"/>
+            <g font-family="Georgia,'Times New Roman',serif" font-size="12" text-anchor="middle" font-weight="bold" fill="#3c3428">
+              <text x="42" y="57">I</text><text x="42" y="69">II</text><text x="42" y="81">III</text><text x="42" y="93">IV</text><text x="42" y="105">V</text>
+            </g>
+            <g font-family="Georgia,'Times New Roman',serif" font-size="12" text-anchor="middle" font-weight="bold" fill="rgba(215,205,190,0.65)">
+              <text x="41.3" y="56.3">I</text><text x="41.3" y="68.3">II</text><text x="41.3" y="80.3">III</text><text x="41.3" y="92.3">IV</text><text x="41.3" y="104.3">V</text>
+            </g>
+            <g font-family="Georgia,'Times New Roman',serif" font-size="12" text-anchor="middle" font-weight="bold" fill="#3c3428">
+              <text x="126" y="57">VI</text><text x="126" y="69">VII</text><text x="126" y="81">VIII</text><text x="126" y="93">IX</text><text x="126" y="105">X</text>
+            </g>
+            <g font-family="Georgia,'Times New Roman',serif" font-size="12" text-anchor="middle" font-weight="bold" fill="rgba(215,205,190,0.6)">
+              <text x="125.3" y="56.3">VI</text><text x="125.3" y="68.3">VII</text><text x="125.3" y="80.3">VIII</text><text x="125.3" y="92.3">IX</text><text x="125.3" y="104.3">X</text>
+            </g>
+            <rect x="-80" y="0" width="80" height="124" fill="url(#otSG)" clip-path="url(#otSC)" class="tablets-shimmer"/>
           </svg>
         </div>` : ''}
         <div class="verse-reference">${parsed.reference}</div>
