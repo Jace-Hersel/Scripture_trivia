@@ -3171,7 +3171,7 @@ function renderFitbVerse() {
         <span class="category-badge">${fitbVolLabels[fitbVolume] || "Scripture"}</span>
         <span class="category-badge" style="background:var(--accent)">Fill in the Blanks</span>
         <span class="difficulty-badge ${parsed.difficulty}">${parsed.difficulty}</span>
-        <div class="bom-art">
+        ${fitbVolume === 'bom' ? `<div class="bom-art">
           <svg viewBox="0 0 128 158" class="plates-svg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <defs>
               <linearGradient id="pgf" x1="0" y1="0" x2="1" y2="1">
@@ -3244,7 +3244,7 @@ function renderFitbVerse() {
             <!-- Gold shimmer sweep (left to right) -->
             <rect x="-82" y="8" width="82" height="128" fill="url(#psg)" clip-path="url(#plc)" class="plates-shimmer"/>
           </svg>
-        </div>
+        </div>` : ''}
         <div class="verse-reference">${parsed.reference}</div>
         <div class="verse-text">${verseHtml}</div>
         <div class="word-pile-label">Word Pile — tap a blank, then tap a word</div>
