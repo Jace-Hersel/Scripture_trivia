@@ -484,6 +484,11 @@
             animation: doveGlow 3.5s ease-in-out infinite, doveSoar 3.2s ease-in-out infinite;
         }
 
+        /* --- Pearl Art (Pearl of Great Price) --- */
+        .pearl-svg { width: 148px; height: auto; animation: pearlGlow 3.8s ease-in-out infinite, pearlFloat 4.2s ease-in-out infinite; }
+        @keyframes pearlGlow { 0%, 100% { filter: drop-shadow(0 4px 12px rgba(180,160,240,0.35)); } 50% { filter: drop-shadow(0 6px 26px rgba(210,190,255,0.68)); } }
+        @keyframes pearlFloat { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-6px); } }
+
         /* --- Fill in the Blanks --- */
         .verse-reference {
             font-size: 0.85rem;
@@ -2933,6 +2938,7 @@ function startGame() {
     const selectedBook = getSelected('bookPills') || 'all';
     let pool = [...QUESTIONS];
     if (currentVolume !== 'all') pool = pool.filter(q => q.volume === currentVolume);
+    else pool = pool.filter(q => q.volume !== 'pmg');
     if (selectedBook !== 'all') pool = pool.filter(q => q.book === selectedBook);
     if (state.category !== 'all') pool = pool.filter(q => q.category === state.category);
     if (state.difficulty !== 'all') pool = pool.filter(q => q.difficulty === state.difficulty);
@@ -3081,6 +3087,61 @@ function renderQuestion() {
           </svg>
         </div>` : ''}
         ${q.volume === 'nt' ? `<div class="bom-art"><img src="${NT_DOVE}" class="dove-img" alt=""/></div>` : ''}
+        ${q.volume === 'pgp' ? `<div class="bom-art">
+          <svg viewBox="0 0 150 130" class="pearl-svg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <linearGradient id="pgpSE2" x1="0.2" y1="0" x2="0.8" y2="1">
+                <stop offset="0%" stop-color="#ecdfa0"/>
+                <stop offset="55%" stop-color="#c8a050"/>
+                <stop offset="100%" stop-color="#9a7232"/>
+              </linearGradient>
+              <radialGradient id="pgpSN2" cx="0.5" cy="0.45" r="0.65">
+                <stop offset="0%" stop-color="#fef9f0"/>
+                <stop offset="45%" stop-color="#f0e5ce"/>
+                <stop offset="85%" stop-color="#dccfae"/>
+                <stop offset="100%" stop-color="#c8b888"/>
+              </radialGradient>
+              <radialGradient id="pgpPM2" cx="0.38" cy="0.32" r="0.68">
+                <stop offset="0%" stop-color="#ffffff"/>
+                <stop offset="22%" stop-color="#f6f2ff"/>
+                <stop offset="50%" stop-color="#dcd4f8"/>
+                <stop offset="75%" stop-color="#c6bef0"/>
+                <stop offset="100%" stop-color="#b4aae4"/>
+              </radialGradient>
+              <radialGradient id="pgpPH2" cx="0.3" cy="0.26" r="0.33">
+                <stop offset="0%" stop-color="rgba(255,255,255,1)"/>
+                <stop offset="55%" stop-color="rgba(255,255,255,0.45)"/>
+                <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+              </radialGradient>
+              <radialGradient id="pgpPI2" cx="0.66" cy="0.68" r="0.48">
+                <stop offset="0%" stop-color="rgba(220,170,240,0.38)"/>
+                <stop offset="100%" stop-color="rgba(220,170,240,0)"/>
+              </radialGradient>
+            </defs>
+            <path d="M 16,66 C 16,16 134,16 134,66 Z" fill="url(#pgpSE2)" stroke="#9a7030" stroke-width="1.2"/>
+            <path d="M 22,66 C 22,24 128,24 128,66 Z" fill="url(#pgpSN2)"/>
+            <line x1="75" y1="18" x2="22" y2="66" stroke="#c09038" stroke-width="0.85" opacity="0.5"/>
+            <line x1="75" y1="18" x2="35" y2="66" stroke="#c09038" stroke-width="0.85" opacity="0.5"/>
+            <line x1="75" y1="18" x2="50" y2="66" stroke="#c09038" stroke-width="0.85" opacity="0.5"/>
+            <line x1="75" y1="18" x2="75" y2="66" stroke="#c09038" stroke-width="0.85" opacity="0.5"/>
+            <line x1="75" y1="18" x2="100" y2="66" stroke="#c09038" stroke-width="0.85" opacity="0.5"/>
+            <line x1="75" y1="18" x2="115" y2="66" stroke="#c09038" stroke-width="0.85" opacity="0.5"/>
+            <line x1="75" y1="18" x2="128" y2="66" stroke="#c09038" stroke-width="0.85" opacity="0.5"/>
+            <path d="M 16,66 C 16,116 134,116 134,66 Z" fill="url(#pgpSE2)" stroke="#9a7030" stroke-width="1.2"/>
+            <path d="M 22,66 C 22,108 128,108 128,66 Z" fill="url(#pgpSN2)"/>
+            <line x1="75" y1="114" x2="22" y2="66" stroke="#c09038" stroke-width="0.85" opacity="0.5"/>
+            <line x1="75" y1="114" x2="35" y2="66" stroke="#c09038" stroke-width="0.85" opacity="0.5"/>
+            <line x1="75" y1="114" x2="50" y2="66" stroke="#c09038" stroke-width="0.85" opacity="0.5"/>
+            <line x1="75" y1="114" x2="75" y2="66" stroke="#c09038" stroke-width="0.85" opacity="0.5"/>
+            <line x1="75" y1="114" x2="100" y2="66" stroke="#c09038" stroke-width="0.85" opacity="0.5"/>
+            <line x1="75" y1="114" x2="115" y2="66" stroke="#c09038" stroke-width="0.85" opacity="0.5"/>
+            <line x1="75" y1="114" x2="128" y2="66" stroke="#c09038" stroke-width="0.85" opacity="0.5"/>
+            <ellipse cx="75" cy="97" rx="14" ry="3.5" fill="rgba(0,0,0,0.12)"/>
+            <circle cx="75" cy="78" r="21" fill="url(#pgpPM2)"/>
+            <circle cx="75" cy="78" r="21" fill="url(#pgpPH2)"/>
+            <circle cx="75" cy="78" r="21" fill="url(#pgpPI2)"/>
+          </svg>
+        </div>` : ''}
         <p class="question-text">${q.question}</p>
         <div class="answers">
             ${shuffledIndices.map((origIdx, displayIdx) => `
@@ -3258,6 +3319,7 @@ function startFitb() {
     const selectedBook = getSelected('bookPills') || 'all';
     let pool = [...SCRIPTURES];
     if (currentVolume !== 'all') pool = pool.filter(s => s.volume === currentVolume);
+    else pool = pool.filter(s => s.volume !== 'pmg');
     if (selectedBook !== 'all') pool = pool.filter(s => s.book === selectedBook);
     if (diff !== 'all') pool = pool.filter(s => s.difficulty === diff);
     pool = shuffle(pool);
@@ -3436,6 +3498,61 @@ function renderFitbVerse() {
           </svg>
         </div>` : ''}
         ${fitbVolume === 'nt' ? `<div class="bom-art"><img src="${NT_DOVE}" class="dove-img" alt=""/></div>` : ''}
+        ${fitbVolume === 'pgp' ? `<div class="bom-art">
+          <svg viewBox="0 0 150 130" class="pearl-svg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <linearGradient id="pgpSE" x1="0.2" y1="0" x2="0.8" y2="1">
+                <stop offset="0%" stop-color="#ecdfa0"/>
+                <stop offset="55%" stop-color="#c8a050"/>
+                <stop offset="100%" stop-color="#9a7232"/>
+              </linearGradient>
+              <radialGradient id="pgpSN" cx="0.5" cy="0.45" r="0.65">
+                <stop offset="0%" stop-color="#fef9f0"/>
+                <stop offset="45%" stop-color="#f0e5ce"/>
+                <stop offset="85%" stop-color="#dccfae"/>
+                <stop offset="100%" stop-color="#c8b888"/>
+              </radialGradient>
+              <radialGradient id="pgpPM" cx="0.38" cy="0.32" r="0.68">
+                <stop offset="0%" stop-color="#ffffff"/>
+                <stop offset="22%" stop-color="#f6f2ff"/>
+                <stop offset="50%" stop-color="#dcd4f8"/>
+                <stop offset="75%" stop-color="#c6bef0"/>
+                <stop offset="100%" stop-color="#b4aae4"/>
+              </radialGradient>
+              <radialGradient id="pgpPH" cx="0.3" cy="0.26" r="0.33">
+                <stop offset="0%" stop-color="rgba(255,255,255,1)"/>
+                <stop offset="55%" stop-color="rgba(255,255,255,0.45)"/>
+                <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+              </radialGradient>
+              <radialGradient id="pgpPI" cx="0.66" cy="0.68" r="0.48">
+                <stop offset="0%" stop-color="rgba(220,170,240,0.38)"/>
+                <stop offset="100%" stop-color="rgba(220,170,240,0)"/>
+              </radialGradient>
+            </defs>
+            <path d="M 16,66 C 16,16 134,16 134,66 Z" fill="url(#pgpSE)" stroke="#9a7030" stroke-width="1.2"/>
+            <path d="M 22,66 C 22,24 128,24 128,66 Z" fill="url(#pgpSN)"/>
+            <line x1="75" y1="18" x2="22" y2="66" stroke="#c09038" stroke-width="0.85" opacity="0.5"/>
+            <line x1="75" y1="18" x2="35" y2="66" stroke="#c09038" stroke-width="0.85" opacity="0.5"/>
+            <line x1="75" y1="18" x2="50" y2="66" stroke="#c09038" stroke-width="0.85" opacity="0.5"/>
+            <line x1="75" y1="18" x2="75" y2="66" stroke="#c09038" stroke-width="0.85" opacity="0.5"/>
+            <line x1="75" y1="18" x2="100" y2="66" stroke="#c09038" stroke-width="0.85" opacity="0.5"/>
+            <line x1="75" y1="18" x2="115" y2="66" stroke="#c09038" stroke-width="0.85" opacity="0.5"/>
+            <line x1="75" y1="18" x2="128" y2="66" stroke="#c09038" stroke-width="0.85" opacity="0.5"/>
+            <path d="M 16,66 C 16,116 134,116 134,66 Z" fill="url(#pgpSE)" stroke="#9a7030" stroke-width="1.2"/>
+            <path d="M 22,66 C 22,108 128,108 128,66 Z" fill="url(#pgpSN)"/>
+            <line x1="75" y1="114" x2="22" y2="66" stroke="#c09038" stroke-width="0.85" opacity="0.5"/>
+            <line x1="75" y1="114" x2="35" y2="66" stroke="#c09038" stroke-width="0.85" opacity="0.5"/>
+            <line x1="75" y1="114" x2="50" y2="66" stroke="#c09038" stroke-width="0.85" opacity="0.5"/>
+            <line x1="75" y1="114" x2="75" y2="66" stroke="#c09038" stroke-width="0.85" opacity="0.5"/>
+            <line x1="75" y1="114" x2="100" y2="66" stroke="#c09038" stroke-width="0.85" opacity="0.5"/>
+            <line x1="75" y1="114" x2="115" y2="66" stroke="#c09038" stroke-width="0.85" opacity="0.5"/>
+            <line x1="75" y1="114" x2="128" y2="66" stroke="#c09038" stroke-width="0.85" opacity="0.5"/>
+            <ellipse cx="75" cy="97" rx="14" ry="3.5" fill="rgba(0,0,0,0.12)"/>
+            <circle cx="75" cy="78" r="21" fill="url(#pgpPM)"/>
+            <circle cx="75" cy="78" r="21" fill="url(#pgpPH)"/>
+            <circle cx="75" cy="78" r="21" fill="url(#pgpPI)"/>
+          </svg>
+        </div>` : ''}
         <div class="verse-reference">${parsed.reference}</div>
         <div class="verse-text">${verseHtml}</div>
         <div class="word-pile-label">Word Pile — tap a blank, then tap a word</div>
